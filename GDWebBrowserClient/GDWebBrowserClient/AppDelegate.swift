@@ -33,12 +33,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         window?.makeKeyAndVisible()
         
         webVC.delegate = self
+        webVC.showToolbar = true
         webVC.loadURLWithString("google.com")
         webVC.allowsBackForwardNavigationGestures = true
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC))
-            ), dispatch_get_main_queue()) { () -> Void in
-            self.webVC.showToolbar(true, animated: true)
-        }
         
         return true
     }
