@@ -17,6 +17,8 @@ enum GDWebViewControllerProgressIndicatorStyle {
 }
 
 @objc protocol GDWebViewControllerDelegate {
+    optional func webViewController(webViewController: GDWebViewController, didChangeURL newURL: NSURL?)
+    optional func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
 }
 
 class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavigationToolbarDelegate {
@@ -94,6 +96,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
         animateActivityIdicator(false)
+        backForwardListChanged()
     }
     
     func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
@@ -144,35 +147,49 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    private func progressChanged(newValue: NSNumber) {
+        if progressView == nil {
+            progressView = UIProgressView()
+            progressView.setTranslatesAutoresizingMaskIntoConstraints(false)
+            self.view.addSubview(progressView)
+            
+            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[progressView]-0-|", options: nil, metrics: nil, views: ["progressView": progressView]))
+            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[progressView(2)]", options: nil, metrics: nil, views: ["progressView": progressView]))
+        }
+        
+        progressView.progress = newValue.floatValue
+        if progressView.progress == 1 {
+            progressView.progress = 0
+            UIView.animateWithDuration(0.2, animations: { () -> Void in
+                self.progressView.alpha = 0
+            })
+        } else if progressView.alpha == 0 {
+            UIView.animateWithDuration(0.2, animations: { () -> Void in
+                self.progressView.alpha = 1
+            })
+        }
+    }
+    
+    private func backForwardListChanged() {
+        toolbarContainer.backButtonItem?.enabled = webView.canGoBack
+        toolbarContainer.forwardButtonItem?.enabled = webView.canGoForward
+    }
+    
     // MARK: KVO
     
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {        
-        if keyPath == "estimatedProgress" {
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+        switch keyPath {
+        case "estimatedProgress":
             if (progressIndicatorStyle == .ProgressView) || (progressIndicatorStyle == .Both) {
                 if let newValue = change[NSKeyValueChangeNewKey] as? NSNumber {
-                    if progressView == nil {
-                        progressView = UIProgressView()
-                        progressView.setTranslatesAutoresizingMaskIntoConstraints(false)
-                        self.view.addSubview(progressView)
-                        
-                        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[progressView]-0-|", options: nil, metrics: nil, views: ["progressView": progressView]))
-                        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[progressView(2)]", options: nil, metrics: nil, views: ["progressView": progressView]))
-                    }
-                    
-                    progressView.progress = newValue.floatValue
-                    if progressView.progress == 1 {
-                        progressView.progress = 0
-                        UIView.animateWithDuration(0.2, animations: { () -> Void in
-                            self.progressView.alpha = 0
-                        })
-                    } else if progressView.alpha == 0 {
-                        UIView.animateWithDuration(0.2, animations: { () -> Void in
-                            self.progressView.alpha = 1
-                        })
-                    }
+                    progressChanged(newValue)
                 }
             }
-        } else {
+        case "URL":
+            delegate?.webViewController?(self, didChangeURL: webView.URL)
+        case "title":
+            delegate?.webViewController?(self, didChangeTitle: webView.title)
+        default:
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
     }
@@ -199,11 +216,15 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         webView.addObserver(self, forKeyPath: "estimatedProgress", options: .New, context: nil)
+        webView.addObserver(self, forKeyPath: "URL", options: .New, context: nil)
+        webView.addObserver(self, forKeyPath: "title", options: .New, context: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         webView.removeObserver(self, forKeyPath: "estimatedProgress")
+        webView.removeObserver(self, forKeyPath: "URL")
+        webView.removeObserver(self, forKeyPath: "title")
     }
 
     override func didReceiveMemoryWarning() {
