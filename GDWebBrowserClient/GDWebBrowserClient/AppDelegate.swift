@@ -9,23 +9,32 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelegate {
 
     // MARK: Properties
     var window: UIWindow?
     
     // MARK: Private Properties
     var webVC = GDWebViewController()
+    var navVC = UINavigationController()
     
+    // MARK: GDWebViewControllerDelegate Methods
+    
+    func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?) {
+        navVC.navigationBar.topItem?.title = newTitle
+    }
+    
+    // MARK: Life Cycle
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         window = UIWindow(frame: UIScreen.mainScreen().bounds)
-        window?.rootViewController = webVC
-        webVC.loadURLWithString("google.com")
-        webVC.allowsBackForwardNavigationGestures = true
+        navVC.setViewControllers([webVC], animated: false)
+        window?.rootViewController = navVC
         window?.makeKeyAndVisible()
         
-        
+        webVC.delegate = self
+        webVC.loadURLWithString("google.com")
+        webVC.allowsBackForwardNavigationGestures = true
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(1 * Double(NSEC_PER_SEC))
             ), dispatch_get_main_queue()) { () -> Void in
             self.webVC.showToolbar(true, animated: true)
@@ -48,7 +57,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
     }
-
 
 }
 
