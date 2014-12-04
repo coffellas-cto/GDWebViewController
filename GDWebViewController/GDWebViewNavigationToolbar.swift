@@ -40,12 +40,54 @@ class GDWebViewNavigationToolbar: UIView {
         }
     }
     
+    var toolbarTintColor: UIColor? {
+        get {
+            return _toolbarTintColor
+        }
+        
+        set(value) {
+            _toolbarTintColor = value
+            if let toolbar = self.toolbar {
+                toolbar.tintColor = _toolbarTintColor
+            }
+        }
+    }
+    
+    var toolbarBackgroundColor: UIColor? {
+        get {
+            return _toolbarBackgroundColor
+        }
+        
+        set(value) {
+            _toolbarBackgroundColor = value
+            if let toolbar = self.toolbar {
+                toolbar.backgroundColor = _toolbarBackgroundColor
+            }
+        }
+    }
+    
+    var toolbarTranslucent: Bool {
+        get {
+            return _toolbarTranslucent
+        }
+        
+        set(value) {
+            _toolbarTranslucent = value
+            if let toolbar = self.toolbar {
+                toolbar.translucent = _toolbarTranslucent
+            }
+        }
+    }
+    
     // MARK: Private Properties
     
     private var _toolbar: UIToolbar!
     private var _backButtonItem: UIBarButtonItem!
     private var _forwardButtonItem: UIBarButtonItem!
     private var _refreshButtonItem: UIBarButtonItem!
+    private var _toolbarTintColor: UIColor?
+    private var _toolbarBackgroundColor: UIColor?
+    private var _toolbarTranslucent = true
     
     // MARK: Navigation Methods
     func goBack() {
@@ -80,6 +122,9 @@ class GDWebViewNavigationToolbar: UIView {
         
         if (_toolbar == nil) {
             _toolbar = UIToolbar()
+            _toolbar.tintColor = _toolbarTintColor
+            _toolbar.backgroundColor = _toolbarBackgroundColor
+            _toolbar.translucent = _toolbarTranslucent
             _toolbar.setTranslatesAutoresizingMaskIntoConstraints(false)
             self.addSubview(_toolbar)
             self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbar]-0-|", options: nil, metrics: nil, views: ["toolbar": _toolbar]))
