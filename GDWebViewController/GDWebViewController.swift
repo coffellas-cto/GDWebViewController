@@ -19,11 +19,19 @@ enum GDWebViewControllerProgressIndicatorStyle {
 @objc protocol GDWebViewControllerDelegate {
 }
 
-class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, GDWebViewNavigationToolbarDelegate {
+class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavigationToolbarDelegate {
     
     // MARK: Public Properties
     weak var delegate: GDWebViewControllerDelegate?
     var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle? = .Both
+    var allowsBackForwardNavigationGestures: Bool {
+        get {
+            return webView.allowsBackForwardNavigationGestures
+        }
+        set(value) {
+            webView.allowsBackForwardNavigationGestures = value
+        }
+    }
     
     // MARK: Private Properties
     private var webView: WKWebView!
@@ -208,7 +216,6 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
         
         webView = WKWebView()
         webView.navigationDelegate = self
-        webView.UIDelegate = self
         webView.setTranslatesAutoresizingMaskIntoConstraints(false)
         
         toolbarContainer = GDWebViewNavigationToolbar(delegate: self)
