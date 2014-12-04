@@ -13,6 +13,7 @@ enum GDWebViewControllerProgressIndicatorStyle {
     case ActivityIndicator
     case ProgressView
     case Both
+    case None
 }
 
 @objc protocol GDWebViewControllerDelegate {
