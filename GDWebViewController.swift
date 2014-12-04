@@ -23,12 +23,15 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     
     // MARK: Public Properties
     weak var delegate: GDWebViewControllerDelegate?
-    var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle? = .ProgressView
+    var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle? = .Both
     
     // MARK: Private Properties
     private var webView: WKWebView!
-    private var activityIndicator: UIActivityIndicatorView?
+    private var activityIndicator: UIActivityIndicatorView!
     private var progressView: UIProgressView!
+    private var toolbarContainer: UIView!
+    private var toolbarHeightConstraint: NSLayoutConstraint!
+    private var toolbar: UIToolbar!
     
     // MARK: Public Methods
     
@@ -48,7 +51,22 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
         webView.loadRequest(NSURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval))
     }
     
+    func showToolbar(show: Bool, animated: Bool) {
+        if show && (toolbar == nil) {
+            toolbar = UIToolbar()
+            toolbar.setTranslatesAutoresizingMaskIntoConstraints(false)
+            toolbarContainer.addSubview(toolbar)
+            toolbarContainer.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbar]-0-|", options: nil, metrics: nil, views: ["toolbar": toolbar]))
+            toolbarContainer.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[toolbar]-0-|", options: nil, metrics: nil, views: ["toolbar": toolbar]))
+        }
+        
+        UIView.animateWithDuration(animated ? 0.2 : 0, animations: { () -> Void in
+            self.toolbarHeightConstraint.constant = show ? 44 : 0
+        })
+    }
+    
     // MARK: WKNavigationDelegate Methods
+    
     func webView(webView: WKWebView, didCommitNavigation navigation: WKNavigation!) {
     }
     
@@ -97,17 +115,20 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     private func animateActivityIdicator(animate: Bool) {
         if animate {
             if activityIndicator == nil {
-                activityIndicator = UIActivityIndicatorView(frame: CGRect(origin: CGPointZero, size: CGSize(width: CGRectGetWidth(webView.frame), height: CGRectGetHeight(webView.frame))))
-                activityIndicator?.backgroundColor = UIColor(white: 0, alpha: 0.2)
-                activityIndicator?.activityIndicatorViewStyle = .WhiteLarge
-                activityIndicator?.hidesWhenStopped = true
-                activityIndicator?.autoresizingMask = .FlexibleWidth | .FlexibleHeight
-                webView.addSubview(activityIndicator!)
+                activityIndicator = UIActivityIndicatorView()
+                activityIndicator.backgroundColor = UIColor(white: 0, alpha: 0.2)
+                activityIndicator.activityIndicatorViewStyle = .WhiteLarge
+                activityIndicator.hidesWhenStopped = true
+                activityIndicator.setTranslatesAutoresizingMaskIntoConstraints(false)
+                self.view.addSubview(activityIndicator!)
+                
+                self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[activityIndicator]-0-|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator]))
+                self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[activityIndicator]-0-|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator]))
             }
             
-            activityIndicator?.startAnimating()
-        } else {
-            activityIndicator?.stopAnimating()
+            activityIndicator.startAnimating()
+        } else if activityIndicator != nil {
+            activityIndicator.stopAnimating()
         }
     }
     
@@ -118,9 +139,12 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
             if (progressIndicatorStyle == .ProgressView) || (progressIndicatorStyle == .Both) {
                 if let newValue = change[NSKeyValueChangeNewKey] as? NSNumber {
                     if progressView == nil {
-                        progressView = UIProgressView(frame: CGRectMake(0, 0, CGRectGetWidth(webView.frame), 4))
-                        progressView.autoresizingMask = .FlexibleWidth | .FlexibleTopMargin
-                        webView.addSubview(progressView)
+                        progressView = UIProgressView()
+                        progressView.setTranslatesAutoresizingMaskIntoConstraints(false)
+                        self.view.addSubview(progressView)
+                        
+                        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[progressView]-0-|", options: nil, metrics: nil, views: ["progressView": progressView]))
+                        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[progressView(2)]", options: nil, metrics: nil, views: ["progressView": progressView]))
                     }
                     
                     progressView.progress = newValue.floatValue
@@ -146,8 +170,18 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        webView.frame = self.view.bounds
+        // Set up toolbarContainer
+        self.view.addSubview(toolbarContainer)
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbarContainer]-0-|", options: nil, metrics: nil, views: ["toolbarContainer": toolbarContainer]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[toolbarContainer]-0-|", options: nil, metrics: nil, views: ["toolbarContainer": toolbarContainer]))
+        toolbarHeightConstraint = NSLayoutConstraint(item: toolbarContainer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 0)
+        toolbarContainer.addConstraint(toolbarHeightConstraint)
+        
+        // Set up webView
         self.view.addSubview(webView)
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[webView]-0-|", options: nil, metrics: nil, views: ["webView": webView]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[webView]-0-[toolbarContainer]|", options: nil, metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer]))
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -168,9 +202,12 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
         super.init()
         
         webView = WKWebView()
-        webView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
         webView.navigationDelegate = self
         webView.UIDelegate = self
+        webView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        
+        toolbarContainer = UIView()
+        toolbarContainer.setTranslatesAutoresizingMaskIntoConstraints(false)
     }
 
     required init(coder aDecoder: NSCoder) {
