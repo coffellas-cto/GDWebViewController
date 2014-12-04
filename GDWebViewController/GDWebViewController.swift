@@ -19,7 +19,7 @@ enum GDWebViewControllerProgressIndicatorStyle {
 @objc protocol GDWebViewControllerDelegate {
 }
 
-class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
+class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, GDWebViewNavigationToolbarDelegate {
     
     // MARK: Public Properties
     weak var delegate: GDWebViewControllerDelegate?
@@ -29,9 +29,8 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     private var webView: WKWebView!
     private var activityIndicator: UIActivityIndicatorView!
     private var progressView: UIProgressView!
-    private var toolbarContainer: UIView!
+    private var toolbarContainer: GDWebViewNavigationToolbar!
     private var toolbarHeightConstraint: NSLayoutConstraint!
-    private var toolbar: UIToolbar!
     
     // MARK: Public Methods
     
@@ -52,34 +51,22 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     }
     
     func showToolbar(show: Bool, animated: Bool) {
-        if show && (toolbar == nil) {
-            toolbar = UIToolbar()
-            toolbar.setTranslatesAutoresizingMaskIntoConstraints(false)
-            toolbarContainer.addSubview(toolbar)
-            toolbarContainer.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbar]-0-|", options: nil, metrics: nil, views: ["toolbar": toolbar]))
-            toolbarContainer.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[toolbar]-0-|", options: nil, metrics: nil, views: ["toolbar": toolbar]))
-            
-            // Set up toolbar
-            let backButtonItem = UIBarButtonItem(title: "\u{25C0}\u{FE0E}", style: UIBarButtonItemStyle.Plain, target: self, action: "goBack")
-            let forwardButtonItem = UIBarButtonItem(title: "\u{25B6}\u{FE0E}", style: UIBarButtonItemStyle.Plain, target: self, action: "goForward")
-            let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
-            let refreshButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: "refresh")
-            toolbar.setItems([backButtonItem, forwardButtonItem, flexibleSpace, refreshButtonItem], animated: false)
-        }
-        
         UIView.animateWithDuration(animated ? 0.2 : 0, animations: { () -> Void in
             self.toolbarHeightConstraint.constant = show ? 44 : 0
         })
     }
     
-    // MARK: Navigation Methods
-    func goBack() {
+    // MARK: GDWebViewNavigationToolbarDelegate Methods
+    func webViewNavigationToolbarGoBack(toolbar: GDWebViewNavigationToolbar) {
+        webView.goBack()
     }
     
-    func goForward() {
+    func webViewNavigationToolbarGoForward(toolbar: GDWebViewNavigationToolbar) {
+        webView.goForward()
     }
     
-    func refresh() {
+    func webViewNavigationToolbarRefresh(toolbar: GDWebViewNavigationToolbar) {
+        webView.reload()
     }
     
     // MARK: WKNavigationDelegate Methods
@@ -213,6 +200,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+        webView.stopLoading()
     }
     
     override init() {
@@ -223,7 +211,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
         webView.UIDelegate = self
         webView.setTranslatesAutoresizingMaskIntoConstraints(false)
         
-        toolbarContainer = UIView()
+        toolbarContainer = GDWebViewNavigationToolbar(delegate: self)
         toolbarContainer.setTranslatesAutoresizingMaskIntoConstraints(false)
     }
 

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9ACD55851A311070009570EE /* GDWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD55841A311070009570EE /* GDWebViewController.swift */; };
+		9ACD55871A3110BA009570EE /* GDWebViewNavigationToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD55861A3110BA009570EE /* GDWebViewNavigationToolbar.swift */; };
 		9AF407951A3000F600CEC89A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF407941A3000F600CEC89A /* AppDelegate.swift */; };
 		9AF4079C1A3000F600CEC89A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9AF4079B1A3000F600CEC89A /* Images.xcassets */; };
 		9AF4079F1A3000F600CEC89A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9AF4079D1A3000F600CEC89A /* LaunchScreen.xib */; };
@@ -26,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		9ACD55841A311070009570EE /* GDWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GDWebViewController.swift; sourceTree = "<group>"; };
+		9ACD55861A3110BA009570EE /* GDWebViewNavigationToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GDWebViewNavigationToolbar.swift; sourceTree = "<group>"; };
 		9AF4078F1A3000F600CEC89A /* GDWebBrowserClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDWebBrowserClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AF407931A3000F600CEC89A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9AF407941A3000F600CEC89A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -57,6 +59,7 @@
 		9ACD55831A311070009570EE /* GDWebViewController */ = {
 			isa = PBXGroup;
 			children = (
+				9ACD55861A3110BA009570EE /* GDWebViewNavigationToolbar.swift */,
 				9ACD55841A311070009570EE /* GDWebViewController.swift */,
 			);
 			name = GDWebViewController;
@@ -217,6 +220,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9ACD55871A3110BA009570EE /* GDWebViewNavigationToolbar.swift in Sources */,
 				9ACD55851A311070009570EE /* GDWebViewController.swift in Sources */,
 				9AF407951A3000F600CEC89A /* AppDelegate.swift in Sources */,
 			);
