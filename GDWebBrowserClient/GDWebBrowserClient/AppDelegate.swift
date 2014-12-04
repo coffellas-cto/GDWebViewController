@@ -35,6 +35,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         webVC.delegate = self
         webVC.showToolbar = true
         webVC.loadURLWithString("google.com")
+        webVC.toolbar.toolbarTintColor = UIColor.darkGrayColor()
+        webVC.toolbar.toolbarBackgroundColor = UIColor.whiteColor()
+        webVC.toolbar.toolbarTranslucent = false
         webVC.allowsBackForwardNavigationGestures = true
         
         return true
