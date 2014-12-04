@@ -45,6 +45,12 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    var toolbar: GDWebViewNavigationToolbar {
+        get {
+            return toolbarContainer
+        }
+    }
+    
     // MARK: Private Properties
     private var webView: WKWebView!
     private var activityIndicator: UIActivityIndicatorView!
