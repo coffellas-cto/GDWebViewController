@@ -35,12 +35,23 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    var showToolbar: Bool {
+        set(value) {
+            self.toolbarHeight = value ? 44 : 0
+        }
+        
+        get {
+            return self.toolbarHeight == 44
+        }
+    }
+    
     // MARK: Private Properties
     private var webView: WKWebView!
     private var activityIndicator: UIActivityIndicatorView!
     private var progressView: UIProgressView!
     private var toolbarContainer: GDWebViewNavigationToolbar!
     private var toolbarHeightConstraint: NSLayoutConstraint!
+    private var toolbarHeight: CGFloat = 0
     
     // MARK: Public Methods
     
@@ -61,9 +72,13 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     func showToolbar(show: Bool, animated: Bool) {
-        UIView.animateWithDuration(animated ? 0.2 : 0, animations: { () -> Void in
-            self.toolbarHeightConstraint.constant = show ? 44 : 0
-        })
+        self.showToolbar = show
+        
+        if toolbarHeightConstraint != nil {
+            UIView.animateWithDuration(animated ? 0.2 : 0, animations: { () -> Void in
+                self.toolbarHeightConstraint.constant = self.toolbarHeight
+            })
+        }
     }
     
     // MARK: GDWebViewNavigationToolbarDelegate Methods
@@ -203,7 +218,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         self.view.addSubview(toolbarContainer)
         self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbarContainer]-0-|", options: nil, metrics: nil, views: ["toolbarContainer": toolbarContainer]))
         self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[toolbarContainer]-0-|", options: nil, metrics: nil, views: ["toolbarContainer": toolbarContainer]))
-        toolbarHeightConstraint = NSLayoutConstraint(item: toolbarContainer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: 0)
+        toolbarHeightConstraint = NSLayoutConstraint(item: toolbarContainer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: toolbarHeight)
         toolbarContainer.addConstraint(toolbarHeightConstraint)
         
         // Set up webView
