@@ -209,8 +209,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         // Set up webView
         self.view.addSubview(webView)
         self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[webView]-0-|", options: nil, metrics: nil, views: ["webView": webView]))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[webView]-0-[toolbarContainer]|", options: nil, metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer]))
-        
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: nil, metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
     }
     
     override func viewWillAppear(animated: Bool) {
