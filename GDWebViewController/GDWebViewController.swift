@@ -58,11 +58,28 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
             toolbarContainer.addSubview(toolbar)
             toolbarContainer.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbar]-0-|", options: nil, metrics: nil, views: ["toolbar": toolbar]))
             toolbarContainer.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[toolbar]-0-|", options: nil, metrics: nil, views: ["toolbar": toolbar]))
+            
+            // Set up toolbar
+            let backButtonItem = UIBarButtonItem(title: "\u{25C0}\u{FE0E}", style: UIBarButtonItemStyle.Plain, target: self, action: "goBack")
+            let forwardButtonItem = UIBarButtonItem(title: "\u{25B6}\u{FE0E}", style: UIBarButtonItemStyle.Plain, target: self, action: "goForward")
+            let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+            let refreshButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: "refresh")
+            toolbar.setItems([backButtonItem, forwardButtonItem, flexibleSpace, refreshButtonItem], animated: false)
         }
         
         UIView.animateWithDuration(animated ? 0.2 : 0, animations: { () -> Void in
             self.toolbarHeightConstraint.constant = show ? 44 : 0
         })
+    }
+    
+    // MARK: Navigation Methods
+    func goBack() {
+    }
+    
+    func goForward() {
+    }
+    
+    func refresh() {
     }
     
     // MARK: WKNavigationDelegate Methods
