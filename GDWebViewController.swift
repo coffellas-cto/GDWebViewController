@@ -11,7 +11,8 @@ import WebKit
 
 enum GDWebViewControllerProgressIndicatorStyle {
     case ActivityIndicator
-    case ProgressBar
+    case ProgressView
+    case Both
 }
 
 @objc protocol GDWebViewControllerDelegate {
@@ -21,13 +22,15 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     
     // MARK: Public Properties
     weak var delegate: GDWebViewControllerDelegate?
-    var progressindicatorStyle: GDWebViewControllerProgressIndicatorStyle? = .ActivityIndicator
+    var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle? = .ProgressView
     
     // MARK: Private Properties
     private var webView: WKWebView!
     private var activityIndicator: UIActivityIndicatorView?
+    private var progressView: UIProgressView!
     
-    // MARK: Public Methods:
+    // MARK: Public Methods
+    
     func loadURLWithString(URLString: String) {
         if let URL = NSURL(string: URLString) {
             if (URL.scheme != nil) && (URL.host != nil) {
@@ -69,7 +72,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     }
     
     func webView(webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        if progressindicatorStyle == .ActivityIndicator {
+        if (progressIndicatorStyle == .ActivityIndicator) || (progressIndicatorStyle == .Both) {
             animateActivityIdicator(true)
         }
     }
@@ -83,6 +86,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
     }
     
     // MARK: Some Private Methods
+    
     private func showError(errorString: String?) {
         var alertView = UIAlertController(title: "Error", message: errorString, preferredStyle: .Alert)
         alertView.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
@@ -106,6 +110,36 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
         }
     }
     
+    // MARK: KVO
+    
+    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {        
+        if keyPath == "estimatedProgress" {
+            if (progressIndicatorStyle == .ProgressView) || (progressIndicatorStyle == .Both) {
+                if let newValue = change[NSKeyValueChangeNewKey] as? NSNumber {
+                    if progressView == nil {
+                        progressView = UIProgressView(frame: CGRectMake(0, 0, CGRectGetWidth(webView.frame), 4))
+                        progressView.autoresizingMask = .FlexibleWidth | .FlexibleTopMargin
+                        webView.addSubview(progressView)
+                    }
+                    
+                    progressView.progress = newValue.floatValue
+                    if progressView.progress == 1 {
+                        progressView.progress = 0
+                        UIView.animateWithDuration(0.2, animations: { () -> Void in
+                            self.progressView.alpha = 0
+                        })
+                    } else if progressView.alpha == 0 {
+                        UIView.animateWithDuration(0.2, animations: { () -> Void in
+                            self.progressView.alpha = 1
+                        })
+                    }
+                }
+            }
+        } else {
+            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+        }
+    }
+    
     // MARK: Life Cycle
 
     override func viewDidLoad() {
@@ -113,6 +147,16 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate 
         
         webView.frame = self.view.bounds
         self.view.addSubview(webView)
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        webView.addObserver(self, forKeyPath: "estimatedProgress", options: .New, context: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        webView.removeObserver(self, forKeyPath: "estimatedProgress")
     }
 
     override func didReceiveMemoryWarning() {
