@@ -8,6 +8,7 @@ A simple view controller for navigating web pages using WKWebView
 ## Description
 - A browser-like view controller to support web pages navigation in your Swift app.
 - Supports back-forward navigation and page refresh action.
+- Supports back-forward swipe gestures.
 - Has built-in activity indicators (both progress view and activity indicator).
 
 ## Installation
