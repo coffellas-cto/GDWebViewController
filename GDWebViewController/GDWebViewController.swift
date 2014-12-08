@@ -24,8 +24,14 @@ enum GDWebViewControllerProgressIndicatorStyle {
 class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavigationToolbarDelegate {
     
     // MARK: Public Properties
+    
+    /** An object to serve as a delegate which conforms to GDWebViewNavigationToolbarDelegate protocol. */
     weak var delegate: GDWebViewControllerDelegate?
+    
+    /** The style of progress indication visualization. Can be one of four values: .ActivityIndicator, .ProgressView, .Both, .None*/
     var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle? = .Both
+    
+    /** A Boolean value indicating whether horizontal swipe gestures will trigger back-forward list navigations. The default value is false. */
     var allowsBackForwardNavigationGestures: Bool {
         get {
             return webView.allowsBackForwardNavigationGestures
@@ -35,6 +41,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    /** A boolean value if set to true shows the toolbar; otherwise, hides it. */
     var showToolbar: Bool {
         set(value) {
             self.toolbarHeight = value ? 44 : 0
@@ -45,6 +52,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    /** A boolean value if set to true shows the refresh control on the toolbar; otherwise, hides it. */
     var showRefreshControl: Bool {
         get {
             return toolbarContainer.showRefreshControl
@@ -55,6 +63,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    /** The navigation toolbar object (read-only). */
     var toolbar: GDWebViewNavigationToolbar {
         get {
             return toolbarContainer
@@ -71,6 +80,12 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     
     // MARK: Public Methods
     
+    /**
+    Navigates to an URL created from provided string.
+    
+    :param: URLString The string that represents an URL.
+    */
+    
     func loadURLWithString(URLString: String) {
         if let URL = NSURL(string: URLString) {
             if (URL.scheme != nil) && (URL.host != nil) {
@@ -83,10 +98,23 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    /**
+    Navigates to the URL.
+    
+    :param: URL The URL for a request.
+    :param: cachePolicy The cache policy for a request. Optional. Default value is .UseProtocolCachePolicy.
+    :param: timeoutInterval The timeout interval for a request, in seconds. Optional. Default value is 0.
+    */
     func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0) {
         webView.loadRequest(NSURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval))
     }
     
+    /**
+    Navigates to the URL.
+    
+    :param: show A Boolean value if set to true shows the toolbar; otherwise, hides it.
+    :param: animated A Boolean value if set to true animates the transition; otherwise, does not.
+    */
     func showToolbar(show: Bool, animated: Bool) {
         self.showToolbar = show
         
@@ -98,6 +126,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     // MARK: GDWebViewNavigationToolbarDelegate Methods
+    
     func webViewNavigationToolbarGoBack(toolbar: GDWebViewNavigationToolbar) {
         webView.goBack()
     }
