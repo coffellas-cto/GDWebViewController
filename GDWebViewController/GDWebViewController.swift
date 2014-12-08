@@ -230,7 +230,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
             self.view.addSubview(progressView)
             
             self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[progressView]-0-|", options: nil, metrics: nil, views: ["progressView": progressView]))
-            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[progressView(2)]", options: nil, metrics: nil, views: ["progressView": progressView]))
+            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[progressView(2)]", options: nil, metrics: nil, views: ["progressView": progressView, "topGuide": self.topLayoutGuide]))
         }
         
         progressView.progress = newValue.floatValue
