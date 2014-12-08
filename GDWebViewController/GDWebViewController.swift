@@ -19,6 +19,9 @@ enum GDWebViewControllerProgressIndicatorStyle {
 @objc protocol GDWebViewControllerDelegate {
     optional func webViewController(webViewController: GDWebViewController, didChangeURL newURL: NSURL?)
     optional func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
+    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
+    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void);
+    optional func webViewController(webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void);
 }
 
 class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavigationToolbarDelegate {
@@ -160,6 +163,9 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
+        delegate?.webViewController?(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
+            completionHandler(disposition, credential)
+        }) ?? completionHandler(.PerformDefaultHandling, nil)
     }
     
     func webView(webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
@@ -172,11 +178,21 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
-        decisionHandler(WKNavigationActionPolicy.Allow)
+        delegate?.webViewController?(self, decidePolicyForNavigationAction: navigationAction, decisionHandler: { (policy) -> Void in
+            decisionHandler(policy)
+            if policy == .Cancel {
+                self.showError("This navigation is prohibited.")
+            }
+        }) ?? decisionHandler(WKNavigationActionPolicy.Allow)
     }
     
     func webView(webView: WKWebView, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void) {
-        decisionHandler(WKNavigationResponsePolicy.Allow)
+        delegate?.webViewController?(self, decidePolicyForNavigationResponse: navigationResponse, decisionHandler: { (policy) -> Void in
+            decisionHandler(policy)
+            if policy == .Cancel {
+                self.showError("This navigation response is prohibited.")
+            }
+        }) ?? decisionHandler(WKNavigationResponsePolicy.Allow)
     }
     
     // MARK: Some Private Methods
