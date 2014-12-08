@@ -40,7 +40,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     weak var delegate: GDWebViewControllerDelegate?
     
     /** The style of progress indication visualization. Can be one of four values: .ActivityIndicator, .ProgressView, .Both, .None*/
-    var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle? = .Both
+    var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle = .Both
     
     /** A Boolean value indicating whether horizontal swipe gestures will trigger back-forward list navigations. The default value is false. */
     var allowsBackForwardNavigationGestures: Bool {
