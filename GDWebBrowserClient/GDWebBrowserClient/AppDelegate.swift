@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import WebKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelegate {
@@ -24,6 +25,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         navVC.navigationBar.topItem?.title = newTitle
     }
     
+    func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
+        let host = navigationAction.request.URL.host?
+        if host == "github.com" {
+            decisionHandler(.Allow)
+            return
+        }
+        
+        println(navigationAction.request.URL.host)
+        decisionHandler(.Cancel)
+    }
+    
     // MARK: Life Cycle
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
@@ -34,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         
         webVC.delegate = self
         webVC.showToolbar = true
-        webVC.loadURLWithString("google.com")
+        webVC.loadURLWithString("github.com")
         webVC.toolbar.toolbarTintColor = UIColor.darkGrayColor()
         webVC.toolbar.toolbarBackgroundColor = UIColor.whiteColor()
         webVC.toolbar.toolbarTranslucent = false
