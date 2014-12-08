@@ -79,15 +79,35 @@ class GDWebViewNavigationToolbar: UIView {
         }
     }
     
+    var showRefreshControl: Bool {
+        get {
+            return _showRefreshControl
+        }
+        
+        set(value) {
+            if _toolbar != nil {
+                if value && !_showRefreshControl {
+                    _toolbar.setItems([_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem], animated: false)
+                } else if !value && _showRefreshControl {
+                    _toolbar.setItems([_backButtonItem, _forwardButtonItem], animated: false)
+                }
+            }
+            
+            _showRefreshControl = value
+        }
+    }
+    
     // MARK: Private Properties
     
     private var _toolbar: UIToolbar!
     private var _backButtonItem: UIBarButtonItem!
     private var _forwardButtonItem: UIBarButtonItem!
     private var _refreshButtonItem: UIBarButtonItem!
+    private var _flexibleSpace: UIBarButtonItem!
     private var _toolbarTintColor: UIColor?
     private var _toolbarBackgroundColor: UIColor?
     private var _toolbarTranslucent = true
+    private var _showRefreshControl = true
     
     // MARK: Navigation Methods
     func goBack() {
@@ -135,9 +155,10 @@ class GDWebViewNavigationToolbar: UIView {
             _backButtonItem.enabled = false
             _forwardButtonItem = UIBarButtonItem(title: "\u{25B6}\u{FE0E}", style: UIBarButtonItemStyle.Plain, target: self, action: "goForward")
             _forwardButtonItem.enabled = false
-            let flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+            _flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
             _refreshButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: "refresh")
-            _toolbar.setItems([_backButtonItem, _forwardButtonItem, flexibleSpace, _refreshButtonItem], animated: false)
+            var items = _showRefreshControl ? [_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem] : [_backButtonItem, _forwardButtonItem]
+            _toolbar.setItems(items, animated: false)
         }
     }
 

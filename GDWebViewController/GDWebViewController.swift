@@ -45,6 +45,16 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
+    var showRefreshControl: Bool {
+        get {
+            return toolbarContainer.showRefreshControl
+        }
+        
+        set(value) {
+            toolbarContainer.showRefreshControl = value
+        }
+    }
+    
     var toolbar: GDWebViewNavigationToolbar {
         get {
             return toolbarContainer
