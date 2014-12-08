@@ -121,7 +121,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     /**
-    Navigates to the URL.
+    Shows or hides toolbar.
     
     :param: show A Boolean value if set to true shows the toolbar; otherwise, hides it.
     :param: animated A Boolean value if set to true animates the transition; otherwise, does not.
