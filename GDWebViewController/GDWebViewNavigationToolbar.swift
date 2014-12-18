@@ -48,6 +48,7 @@ class GDWebViewNavigationToolbar: UIView {
         }
     }
     
+    /** The tint color to apply to the toolbar button items.*/
     var toolbarTintColor: UIColor? {
         get {
             return _toolbarTintColor
@@ -61,6 +62,7 @@ class GDWebViewNavigationToolbar: UIView {
         }
     }
     
+    /** The toolbar's background color.*/
     var toolbarBackgroundColor: UIColor? {
         get {
             return _toolbarBackgroundColor
@@ -74,6 +76,7 @@ class GDWebViewNavigationToolbar: UIView {
         }
     }
     
+    /** A Boolean value that indicates whether the toolbar is translucent (true) or not (false).*/
     var toolbarTranslucent: Bool {
         get {
             return _toolbarTranslucent
