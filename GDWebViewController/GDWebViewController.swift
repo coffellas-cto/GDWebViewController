@@ -130,8 +130,9 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         self.showToolbar = show
         
         if toolbarHeightConstraint != nil {
+            toolbarHeightConstraint.constant = self.toolbarHeight
             UIView.animateWithDuration(animated ? 0.2 : 0, animations: { () -> Void in
-                self.toolbarHeightConstraint.constant = self.toolbarHeight
+                self.view.layoutIfNeeded()
             })
         }
     }
