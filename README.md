@@ -15,7 +15,7 @@ A simple view controller for navigating web pages using WKWebView
 Just grab two files `GDWebViewController.swift` and `GDWebViewNavigationToolbar.swift` into your project.<br />
 You can download `GDWebBrowserClient` project as well to see how it can be used.
 
-## Interface
+## GDWebViewController Interface
 ####Properties
 `weak var delegate: GDWebViewControllerDelegate?`<br />
 An object to serve as a delegate which conforms to GDWebViewNavigationToolbarDelegate protocol.
@@ -57,3 +57,14 @@ Shows or hides toolbar.
 
 Notice:<br />
 You must do `import WebKit` if you use last three methods from `GDWebViewControllerDelegate` description.
+
+## GDWebViewNavigationToolbar Interface
+####Properties
+`var toolbarTintColor: UIColor?`<br />
+The tint color to apply to the toolbar button items.
+
+`var toolbarBackgroundColor: UIColor?`<br />
+The toolbar's background color.
+
+`var toolbarTranslucent: Bool`<br />
+A Boolean value that indicates whether the toolbar is translucent (true) or not (false).
