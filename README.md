@@ -68,3 +68,6 @@ The toolbar's background color.
 
 `var toolbarTranslucent: Bool`<br />
 A Boolean value that indicates whether the toolbar is translucent (true) or not (false).
+
+## License
+Published under MIT license. If you have any feature requests, please create an issue. Smart pull requests are also welcome.
