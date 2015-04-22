@@ -136,10 +136,10 @@ class GDWebViewNavigationToolbar: UIView {
     // MARK: Life Cycle
     
     init(delegate: GDWebViewNavigationToolbarDelegate) {
-        super.init()
+        super.init(frame: CGRectZero)
         self.delegate = delegate
     }
-
+    
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
@@ -172,5 +172,5 @@ class GDWebViewNavigationToolbar: UIView {
             _toolbar.setItems(items, animated: false)
         }
     }
-
+    
 }

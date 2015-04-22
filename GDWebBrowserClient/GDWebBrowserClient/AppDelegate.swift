@@ -11,7 +11,7 @@ import WebKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelegate {
-
+    
     // MARK: Properties
     var window: UIWindow?
     
@@ -22,17 +22,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
     // MARK: GDWebViewControllerDelegate Methods
     
     func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?) {
-        navVC.navigationBar.topItem?.title = newTitle
+        navVC.navigationBar.topItem?.title = newTitle as? String
     }
     
     func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
-        let host = navigationAction.request.URL.host?
+        let host = navigationAction.request.URL?.host
         if host == "github.com" {
             decisionHandler(.Allow)
             return
         }
         
-        println(navigationAction.request.URL.host)
+        println(navigationAction.request.URL?.host)
         decisionHandler(.Cancel)
     }
     
@@ -57,21 +57,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         
         return true
     }
-
+    
     func applicationWillResignActive(application: UIApplication) {
     }
-
+    
     func applicationDidEnterBackground(application: UIApplication) {
     }
-
+    
     func applicationWillEnterForeground(application: UIApplication) {
     }
-
+    
     func applicationDidBecomeActive(application: UIApplication) {
     }
-
+    
     func applicationWillTerminate(application: UIApplication) {
     }
-
+    
 }
 
