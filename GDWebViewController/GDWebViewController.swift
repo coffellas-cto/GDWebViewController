@@ -280,7 +280,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     // MARK: Life Cycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -310,15 +310,14 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         webView.removeObserver(self, forKeyPath: "URL")
         webView.removeObserver(self, forKeyPath: "title")
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         webView.stopLoading()
     }
     
-    override init() {
-        super.init()
-        
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         webView = WKWebView()
         webView.navigationDelegate = self
         webView.setTranslatesAutoresizingMaskIntoConstraints(false)
@@ -326,13 +325,11 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         toolbarContainer = GDWebViewNavigationToolbar(delegate: self)
         toolbarContainer.setTranslatesAutoresizingMaskIntoConstraints(false)
     }
-
+    
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-
+    
+    
 }
