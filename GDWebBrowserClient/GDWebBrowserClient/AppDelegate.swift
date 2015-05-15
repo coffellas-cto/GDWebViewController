@@ -9,8 +9,11 @@
 import UIKit
 import WebKit
 
+let gHost = "apple.com"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelegate {
+    
     
     // MARK: Properties
     var window: UIWindow?
@@ -26,10 +29,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
     }
     
     func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
-        let host = navigationAction.request.URL?.host
-        if host == "github.com" {
-            decisionHandler(.Allow)
-            return
+        if let URL = navigationAction.request.URL as NSURL?,
+            host = URL.host as NSString?
+        {
+            let testSubdomain = "." + gHost
+            if host as String == gHost || host.rangeOfString(testSubdomain, options: .CaseInsensitiveSearch).location != NSNotFound {
+                decisionHandler(.Allow)
+                return
+            }
         }
         
         println(navigationAction.request.URL?.host)
@@ -45,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         window?.makeKeyAndVisible()
         
         webVC.delegate = self
-        webVC.loadURLWithString("github.com")
+        webVC.loadURLWithString(gHost)
         webVC.toolbar.toolbarTintColor = UIColor.darkGrayColor()
         webVC.toolbar.toolbarBackgroundColor = UIColor.whiteColor()
         webVC.toolbar.toolbarTranslucent = false
