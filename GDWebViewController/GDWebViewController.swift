@@ -256,6 +256,10 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     private func backForwardListChanged() {
+        if self.allowsBackForwardNavigationGestures {
+            self.navigationController?.interactivePopGestureRecognizer.enabled = !webView.canGoBack
+        }
+        
         toolbarContainer.backButtonItem?.enabled = webView.canGoBack
         toolbarContainer.forwardButtonItem?.enabled = webView.canGoForward
     }
