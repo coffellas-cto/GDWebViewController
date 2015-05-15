@@ -88,6 +88,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     private var toolbarContainer: GDWebViewNavigationToolbar!
     private var toolbarHeightConstraint: NSLayoutConstraint!
     private var toolbarHeight: CGFloat = 0
+    private var navControllerUsesBackSwipe: Bool = false
     
     // MARK: Public Methods
     
@@ -256,7 +257,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     private func backForwardListChanged() {
-        if self.allowsBackForwardNavigationGestures {
+        if self.navControllerUsesBackSwipe && self.allowsBackForwardNavigationGestures {
             self.navigationController?.interactivePopGestureRecognizer.enabled = !webView.canGoBack
         }
         
@@ -313,6 +314,20 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         webView.removeObserver(self, forKeyPath: "estimatedProgress")
         webView.removeObserver(self, forKeyPath: "URL")
         webView.removeObserver(self, forKeyPath: "title")
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        if let navVC = self.navigationController {
+            navControllerUsesBackSwipe = navVC.interactivePopGestureRecognizer.enabled
+        }
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        if navControllerUsesBackSwipe {
+            self.navigationController?.interactivePopGestureRecognizer.enabled = true
+        }
     }
     
     override func didReceiveMemoryWarning() {
