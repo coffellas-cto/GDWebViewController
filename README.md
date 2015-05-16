@@ -26,11 +26,11 @@ The style of progress indication visualization. Can be one of four values: .Acti
 `var allowsBackForwardNavigationGestures: Bool`<br />
 A Boolean value indicating whether horizontal swipe gestures will trigger back-forward list navigations. The default value is false.
 
-`var showToolbar: Bool`<br />
+`var showsToolbar: Bool`<br />
 A boolean value if set to true shows the toolbar; otherwise, hides it.
 
-`var showRefreshControl: Bool`<br />
-A boolean value if set to true shows the refresh control on the toolbar; otherwise, hides it.
+`var showsStopRefreshControl: Bool`<br />
+A boolean value if set to true shows the refresh control (or stop control while loading) on the toolbar; otherwise, hides it.
 
 `var toolbar: GDWebViewNavigationToolbar`<br />
 The navigation toolbar object (read-only).
@@ -41,7 +41,7 @@ Navigates to an URL created from provided string.
 `func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0)`<br />
 Navigates to the URL.
 
-`func showToolbar(show: Bool, animated: Bool)`<br />
+`func showsToolbar(show: Bool, animated: Bool)`<br />
 Shows or hides toolbar.
 
 ####GDWebViewControllerDelegate Methods
