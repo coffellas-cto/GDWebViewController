@@ -45,7 +45,7 @@ Navigates to the URL.
 Shows or hides toolbar.
 
 ####GDWebViewControllerDelegate Methods
-```
+```swift
 @objc protocol GDWebViewControllerDelegate {
     optional func webViewController(webViewController: GDWebViewController, didChangeURL newURL: NSURL?)
     optional func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
