@@ -20,6 +20,7 @@ import UIKit
     func webViewNavigationToolbarGoBack(toolbar: GDWebViewNavigationToolbar)
     func webViewNavigationToolbarGoForward(toolbar: GDWebViewNavigationToolbar)
     func webViewNavigationToolbarRefresh(toolbar: GDWebViewNavigationToolbar)
+    func webViewNavigationToolbarStop(toolbar: GDWebViewNavigationToolbar)
 }
 
 class GDWebViewNavigationToolbar: UIView {
@@ -90,21 +91,21 @@ class GDWebViewNavigationToolbar: UIView {
         }
     }
     
-    var showRefreshControl: Bool {
+    var showsStopRefreshControl: Bool {
         get {
-            return _showRefreshControl
+            return _showsStopRefreshControl
         }
         
         set(value) {
             if _toolbar != nil {
-                if value && !_showRefreshControl {
+                if value && !_showsStopRefreshControl {
                     _toolbar.setItems([_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem], animated: false)
-                } else if !value && _showRefreshControl {
+                } else if !value && _showsStopRefreshControl {
                     _toolbar.setItems([_backButtonItem, _forwardButtonItem], animated: false)
                 }
             }
             
-            _showRefreshControl = value
+            _showsStopRefreshControl = value
         }
     }
     
@@ -114,11 +115,32 @@ class GDWebViewNavigationToolbar: UIView {
     private var _backButtonItem: UIBarButtonItem!
     private var _forwardButtonItem: UIBarButtonItem!
     private var _refreshButtonItem: UIBarButtonItem!
+    private var _stopButtonItem: UIBarButtonItem!
     private var _flexibleSpace: UIBarButtonItem!
     private var _toolbarTintColor: UIColor?
     private var _toolbarBackgroundColor: UIColor?
     private var _toolbarTranslucent = true
-    private var _showRefreshControl = true
+    private var _showsStopRefreshControl = true
+    
+    // MARK: Public Methods
+    
+    func loadDidStart() {
+        if !_showsStopRefreshControl {
+            return
+        }
+        
+        var items = [_backButtonItem, _forwardButtonItem, _flexibleSpace, _stopButtonItem]
+        _toolbar.setItems(items, animated: true)
+    }
+    
+    func loadDidFinish() {
+        if !_showsStopRefreshControl {
+            return
+        }
+        
+        var items = [_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem]
+        _toolbar.setItems(items, animated: true)
+    }
     
     // MARK: Navigation Methods
     func goBack() {
@@ -131,6 +153,10 @@ class GDWebViewNavigationToolbar: UIView {
     
     func refresh() {
         delegate?.webViewNavigationToolbarRefresh(self)
+    }
+    
+    func stop() {
+        delegate?.webViewNavigationToolbarStop(self)
     }
     
     // MARK: Life Cycle
@@ -168,7 +194,8 @@ class GDWebViewNavigationToolbar: UIView {
             _forwardButtonItem.enabled = false
             _flexibleSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
             _refreshButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: "refresh")
-            var items = _showRefreshControl ? [_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem] : [_backButtonItem, _forwardButtonItem]
+            _stopButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: "stop")
+            var items = _showsStopRefreshControl ? [_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem] : [_backButtonItem, _forwardButtonItem]
             _toolbar.setItems(items, animated: false)
         }
     }

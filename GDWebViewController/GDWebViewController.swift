@@ -53,7 +53,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     /** A boolean value if set to true shows the toolbar; otherwise, hides it. */
-    var showToolbar: Bool {
+    var showsToolbar: Bool {
         set(value) {
             self.toolbarHeight = value ? 44 : 0
         }
@@ -63,14 +63,14 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         }
     }
     
-    /** A boolean value if set to true shows the refresh control on the toolbar; otherwise, hides it. */
-    var showRefreshControl: Bool {
+    /** A boolean value if set to true shows the refresh control (or stop control while loading) on the toolbar; otherwise, hides it. */
+    var showsStopRefreshControl: Bool {
         get {
-            return toolbarContainer.showRefreshControl
+            return toolbarContainer.showsStopRefreshControl
         }
         
         set(value) {
-            toolbarContainer.showRefreshControl = value
+            toolbarContainer.showsStopRefreshControl = value
         }
     }
     
@@ -83,12 +83,23 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     
     // MARK: Private Properties
     private var webView: WKWebView!
-    private var activityIndicator: UIActivityIndicatorView!
     private var progressView: UIProgressView!
     private var toolbarContainer: GDWebViewNavigationToolbar!
     private var toolbarHeightConstraint: NSLayoutConstraint!
     private var toolbarHeight: CGFloat = 0
     private var navControllerUsesBackSwipe: Bool = false
+    lazy private var activityIndicator: UIActivityIndicatorView! = {
+        var activityIndicator = UIActivityIndicatorView()
+        activityIndicator.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        activityIndicator.activityIndicatorViewStyle = .WhiteLarge
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.setTranslatesAutoresizingMaskIntoConstraints(false)
+        self.view.addSubview(activityIndicator)
+        
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[activityIndicator]-0-|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[activityIndicator]-0-[toolbarContainer]|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator, "toolbarContainer": self.toolbarContainer, "topGuide": self.topLayoutGuide]))
+        return activityIndicator
+    }()
     
     // MARK: Public Methods
     
@@ -128,13 +139,17 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     :param: animated A Boolean value if set to true animates the transition; otherwise, does not.
     */
     func showToolbar(show: Bool, animated: Bool) {
-        self.showToolbar = show
+        self.showsToolbar = show
         
         if toolbarHeightConstraint != nil {
             toolbarHeightConstraint.constant = self.toolbarHeight
-            UIView.animateWithDuration(animated ? 0.2 : 0, animations: { () -> Void in
+            if animated {
+                UIView.animateWithDuration(0.2, animations: { () -> Void in
+                    self.view.layoutIfNeeded()
+                })
+            } else {
                 self.view.layoutIfNeeded()
-            })
+            }
         }
     }
     
@@ -152,23 +167,34 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         webView.reload()
     }
     
+    func webViewNavigationToolbarStop(toolbar: GDWebViewNavigationToolbar) {
+        webView.stopLoading()
+    }
+    
     // MARK: WKNavigationDelegate Methods
     
     func webView(webView: WKWebView, didCommitNavigation navigation: WKNavigation!) {
     }
     
     func webView(webView: WKWebView, didFailNavigation navigation: WKNavigation!, withError error: NSError) {
-        animateActivityIdicator(false)
+        showLoading(false)
+        if error.code == NSURLErrorCancelled {
+            return
+        }
+        
         showError(error.localizedDescription)
     }
     
     func webView(webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: NSError) {
-        animateActivityIdicator(false)
+        showLoading(false)
+        if error.code == NSURLErrorCancelled {
+            return
+        }
         showError(error.localizedDescription)
     }
     
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
-        animateActivityIdicator(false)
+        showLoading(false)
         backForwardListChanged()
     }
     
@@ -182,9 +208,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     }
     
     func webView(webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        if (progressIndicatorStyle == .ActivityIndicator) || (progressIndicatorStyle == .Both) {
-            animateActivityIdicator(true)
-        }
+        showLoading(true)
     }
     
     func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
@@ -213,23 +237,19 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         self.presentViewController(alertView, animated: true, completion: nil)
     }
     
-    private func animateActivityIdicator(animate: Bool) {
+    private func showLoading(animate: Bool) {
         if animate {
-            if activityIndicator == nil {
-                activityIndicator = UIActivityIndicatorView()
-                activityIndicator.backgroundColor = UIColor(white: 0, alpha: 0.2)
-                activityIndicator.activityIndicatorViewStyle = .WhiteLarge
-                activityIndicator.hidesWhenStopped = true
-                activityIndicator.setTranslatesAutoresizingMaskIntoConstraints(false)
-                self.view.addSubview(activityIndicator!)
-                
-                self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[activityIndicator]-0-|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator]))
-                self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[activityIndicator]-0-|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator]))
+            if (progressIndicatorStyle == .ActivityIndicator) || (progressIndicatorStyle == .Both) {
+                activityIndicator.startAnimating()
             }
             
-            activityIndicator.startAnimating()
+            toolbar.loadDidStart()
         } else if activityIndicator != nil {
-            activityIndicator.stopAnimating()
+            if (progressIndicatorStyle == .ActivityIndicator) || (progressIndicatorStyle == .Both) {
+                activityIndicator.stopAnimating()
+            }
+            
+            toolbar.loadDidFinish()
         }
     }
     
