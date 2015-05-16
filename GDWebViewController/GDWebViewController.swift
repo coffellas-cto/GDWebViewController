@@ -337,6 +337,15 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.commonInit()
+    }
+    
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        self.commonInit()
+    }
+    
+    func commonInit() {
         webView = WKWebView()
         webView.navigationDelegate = self
         webView.setTranslatesAutoresizingMaskIntoConstraints(false)
@@ -344,11 +353,4 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         toolbarContainer = GDWebViewNavigationToolbar(delegate: self)
         toolbarContainer.setTranslatesAutoresizingMaskIntoConstraints(false)
     }
-    
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    
-    
 }
