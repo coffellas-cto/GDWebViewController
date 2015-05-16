@@ -1,7 +1,7 @@
 GDWebViewController
 ===================
 
-A simple view controller for navigating web pages using WKWebView
+A simple view controller for navigating web pages using WKWebView. iOS 8+
 
 ![App Screenshots](https://cloud.githubusercontent.com/assets/3193877/7665617/29a8672a-fbc9-11e4-98cf-41fec0f6c403.gif)
 
