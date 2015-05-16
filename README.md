@@ -3,7 +3,7 @@ GDWebViewController
 
 A simple view controller for navigating web pages using WKWebView
 
-![App Screenshots](https://cloud.githubusercontent.com/assets/3193877/5335431/6512a96c-7e5e-11e4-9631-2b7eb8e49657.gif)
+![App Screenshots](https://cloud.githubusercontent.com/assets/3193877/7665617/29a8672a-fbc9-11e4-98cf-41fec0f6c403.gif)
 
 ## Description
 - A browser-like view controller to support web pages navigation in your Swift app.
