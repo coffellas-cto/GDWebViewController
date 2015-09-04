@@ -3,7 +3,7 @@
 //  GDWebBrowserClient
 //
 //  Created by Alex G on 03.12.14.
-//  Copyright (c) 2014 Alexey Gordiyenko. All rights reserved.
+//  Copyright (c) 2015 Alexey Gordiyenko. All rights reserved.
 //
 
 //MIT License
@@ -93,11 +93,11 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         activityIndicator.backgroundColor = UIColor(white: 0, alpha: 0.2)
         activityIndicator.activityIndicatorViewStyle = .WhiteLarge
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.setTranslatesAutoresizingMaskIntoConstraints(false)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(activityIndicator)
         
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[activityIndicator]-0-|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator]))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[activityIndicator]-0-[toolbarContainer]|", options: nil, metrics: nil, views: ["activityIndicator": activityIndicator, "toolbarContainer": self.toolbarContainer, "topGuide": self.topLayoutGuide]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[activityIndicator]-0-|", options: [], metrics: nil, views: ["activityIndicator": activityIndicator]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[activityIndicator]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["activityIndicator": activityIndicator, "toolbarContainer": self.toolbarContainer, "topGuide": self.topLayoutGuide]))
         return activityIndicator
     }()
     
@@ -106,17 +106,17 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     /**
     Navigates to an URL created from provided string.
     
-    :param: URLString The string that represents an URL.
+    - parameter URLString: The string that represents an URL.
     */
+    
+    // TODO: Earlier `scheme` property was optional. Now it isn't true. Need to check that scheme is always
     
     func loadURLWithString(URLString: String) {
         if let URL = NSURL(string: URLString) {
-            if (URL.scheme != nil) && (URL.host != nil) {
+            if (URL.scheme != "") && (URL.host != nil) {
                 loadURL(URL)
-                return
             } else {
                 loadURLWithString("http://\(URLString)")
-                return
             }
         }
     }
@@ -124,9 +124,9 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     /**
     Navigates to the URL.
     
-    :param: URL The URL for a request.
-    :param: cachePolicy The cache policy for a request. Optional. Default value is .UseProtocolCachePolicy.
-    :param: timeoutInterval The timeout interval for a request, in seconds. Optional. Default value is 0.
+    - parameter URL: The URL for a request.
+    - parameter cachePolicy: The cache policy for a request. Optional. Default value is .UseProtocolCachePolicy.
+    - parameter timeoutInterval: The timeout interval for a request, in seconds. Optional. Default value is 0.
     */
     func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0) {
         webView.loadRequest(NSURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval))
@@ -135,8 +135,8 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     /**
     Shows or hides toolbar.
     
-    :param: show A Boolean value if set to true shows the toolbar; otherwise, hides it.
-    :param: animated A Boolean value if set to true animates the transition; otherwise, does not.
+    - parameter show: A Boolean value if set to true shows the toolbar; otherwise, hides it.
+    - parameter animated: A Boolean value if set to true animates the transition; otherwise, does not.
     */
     func showToolbar(show: Bool, animated: Bool) {
         self.showsToolbar = show
@@ -198,7 +198,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         backForwardListChanged()
     }
     
-    func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void) {
+    func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
         delegate?.webViewController?(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
             completionHandler(disposition, credential)
         }) ?? completionHandler(.PerformDefaultHandling, nil)
@@ -232,7 +232,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     // MARK: Some Private Methods
     
     private func showError(errorString: String?) {
-        var alertView = UIAlertController(title: "Error", message: errorString, preferredStyle: .Alert)
+        let alertView = UIAlertController(title: "Error", message: errorString, preferredStyle: .Alert)
         alertView.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
         self.presentViewController(alertView, animated: true, completion: nil)
     }
@@ -256,11 +256,11 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     private func progressChanged(newValue: NSNumber) {
         if progressView == nil {
             progressView = UIProgressView()
-            progressView.setTranslatesAutoresizingMaskIntoConstraints(false)
+            progressView.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(progressView)
             
-            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[progressView]-0-|", options: nil, metrics: nil, views: ["progressView": progressView]))
-            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[progressView(2)]", options: nil, metrics: nil, views: ["progressView": progressView, "topGuide": self.topLayoutGuide]))
+            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[progressView]-0-|", options: [], metrics: nil, views: ["progressView": progressView]))
+            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[progressView(2)]", options: [], metrics: nil, views: ["progressView": progressView, "topGuide": self.topLayoutGuide]))
         }
         
         progressView.progress = newValue.floatValue
@@ -278,7 +278,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     
     private func backForwardListChanged() {
         if self.navControllerUsesBackSwipe && self.allowsBackForwardNavigationGestures {
-            self.navigationController?.interactivePopGestureRecognizer.enabled = !webView.canGoBack
+            self.navigationController?.interactivePopGestureRecognizer?.enabled = !webView.canGoBack
         }
         
         toolbarContainer.backButtonItem?.enabled = webView.canGoBack
@@ -287,11 +287,12 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     
     // MARK: KVO
     
-    override func observeValueForKeyPath(keyPath: String, ofObject object: AnyObject, change: [NSObject : AnyObject], context: UnsafeMutablePointer<Void>) {
+    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+        guard let keyPath = keyPath else {return}
         switch keyPath {
         case "estimatedProgress":
             if (progressIndicatorStyle == .ProgressView) || (progressIndicatorStyle == .Both) {
-                if let newValue = change[NSKeyValueChangeNewKey] as? NSNumber {
+                if let newValue = change?[NSKeyValueChangeNewKey] as? NSNumber {
                     progressChanged(newValue)
                 }
             }
@@ -311,15 +312,15 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         
         // Set up toolbarContainer
         self.view.addSubview(toolbarContainer)
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbarContainer]-0-|", options: nil, metrics: nil, views: ["toolbarContainer": toolbarContainer]))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[toolbarContainer]-0-|", options: nil, metrics: nil, views: ["toolbarContainer": toolbarContainer]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbarContainer]-0-|", options: [], metrics: nil, views: ["toolbarContainer": toolbarContainer]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[toolbarContainer]-0-|", options: [], metrics: nil, views: ["toolbarContainer": toolbarContainer]))
         toolbarHeightConstraint = NSLayoutConstraint(item: toolbarContainer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: toolbarHeight)
         toolbarContainer.addConstraint(toolbarHeightConstraint)
         
         // Set up webView
         self.view.addSubview(webView)
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[webView]-0-|", options: nil, metrics: nil, views: ["webView": webView]))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: nil, metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[webView]-0-|", options: [], metrics: nil, views: ["webView": webView]))
+        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -339,14 +340,18 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         if let navVC = self.navigationController {
-            navControllerUsesBackSwipe = navVC.interactivePopGestureRecognizer.enabled
+            if let gestureRecognizer = navVC.interactivePopGestureRecognizer {
+                navControllerUsesBackSwipe = gestureRecognizer.enabled
+            } else {
+                navControllerUsesBackSwipe = false
+            }
         }
     }
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
         if navControllerUsesBackSwipe {
-            self.navigationController?.interactivePopGestureRecognizer.enabled = true
+            self.navigationController?.interactivePopGestureRecognizer?.enabled = true
         }
     }
     
@@ -360,7 +365,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
         self.commonInit()
     }
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.commonInit()
     }
@@ -368,9 +373,9 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     func commonInit() {
         webView = WKWebView()
         webView.navigationDelegate = self
-        webView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        webView.translatesAutoresizingMaskIntoConstraints = false
         
         toolbarContainer = GDWebViewNavigationToolbar(delegate: self)
-        toolbarContainer.setTranslatesAutoresizingMaskIntoConstraints(false)
+        toolbarContainer.translatesAutoresizingMaskIntoConstraints = false
     }
 }
