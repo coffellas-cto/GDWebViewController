@@ -1,7 +1,10 @@
-GDWebViewController
+GDWebViewController v1.1
 ===================
 
-A simple view controller for navigating web pages using WKWebView. iOS 8+
+A simple view controller for navigating web pages using WKWebView. iOS 8.1+.
+
+Supports Swift 2.0 and iOS 9 SDK.
+For Swift 1.2 support go [here](https://github.com/coffellas-cto/GDWebViewController/releases/tag/v1.0)
 
 ![App Screenshots](https://cloud.githubusercontent.com/assets/3193877/7665617/29a8672a-fbc9-11e4-98cf-41fec0f6c403.gif)
 
