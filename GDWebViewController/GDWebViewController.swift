@@ -83,7 +83,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     }
     
     /** Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`. */
-    var allowJavascriptAlerts = true
+    var allowJavaScriptAlerts = true
     
     // MARK: Private Properties
     private var webView: WKWebView!
@@ -248,7 +248,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     // MARK: WKUIDelegate Methods
     
     func webView(webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: () -> Void) {
-        if !allowJavascriptAlerts {
+        if !allowJavaScriptAlerts {
             return
         }
         

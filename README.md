@@ -38,7 +38,7 @@ A boolean value if set to true shows the refresh control (or stop control while 
 `var toolbar: GDWebViewNavigationToolbar`<br />
 The navigation toolbar object (read-only).
 
-`var allowJavascriptAlerts: Bool`<br />
+`var allowJavaScriptAlerts: Bool`<br />
 Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`.
     
 ####Methods
