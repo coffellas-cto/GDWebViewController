@@ -10,6 +10,7 @@ import UIKit
 import WebKit
 
 let gHost = "apple.com"
+let gShowAlertOnDidFinishLoading = false
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelegate {
@@ -41,6 +42,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         
         print(navigationAction.request.URL?.host)
         decisionHandler(.Cancel)
+    }
+    
+    func webViewController(webViewController: GDWebViewController, didFinishLoading loadedURL: NSURL?) {
+        if gShowAlertOnDidFinishLoading {
+            webViewController.evaluateJavaScript("alert('Loaded!')", completionHandler: nil)
+        }
     }
     
     // MARK: Life Cycle

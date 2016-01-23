@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9A340E451C53A0270030673F /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9A340E441C53A0270030673F /* README.md */; };
 		9ACD55851A311070009570EE /* GDWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD55841A311070009570EE /* GDWebViewController.swift */; };
 		9ACD55871A3110BA009570EE /* GDWebViewNavigationToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD55861A3110BA009570EE /* GDWebViewNavigationToolbar.swift */; };
 		9AF407951A3000F600CEC89A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF407941A3000F600CEC89A /* AppDelegate.swift */; };
@@ -26,6 +27,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9A340E441C53A0270030673F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		9ACD55841A311070009570EE /* GDWebViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GDWebViewController.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		9ACD55861A3110BA009570EE /* GDWebViewNavigationToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GDWebViewNavigationToolbar.swift; sourceTree = "<group>"; };
 		9AF4078F1A3000F600CEC89A /* GDWebBrowserClient.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GDWebBrowserClient.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,6 +71,7 @@
 		9AF407861A3000F600CEC89A = {
 			isa = PBXGroup;
 			children = (
+				9A340E441C53A0270030673F /* README.md */,
 				9AF407911A3000F600CEC89A /* GDWebBrowserClient */,
 				9AF407A71A3000F600CEC89A /* GDWebBrowserClientTests */,
 				9AF407901A3000F600CEC89A /* Products */,
@@ -224,6 +227,7 @@
 			files = (
 				9ACD55871A3110BA009570EE /* GDWebViewNavigationToolbar.swift in Sources */,
 				9ACD55851A311070009570EE /* GDWebViewController.swift in Sources */,
+				9A340E451C53A0270030673F /* README.md in Sources */,
 				9AF407951A3000F600CEC89A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

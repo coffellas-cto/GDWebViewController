@@ -1,4 +1,4 @@
-GDWebViewController v1.1
+GDWebViewController v1.2
 ===================
 
 A simple view controller for navigating web pages using WKWebView. iOS 8.1+.
@@ -37,6 +37,10 @@ A boolean value if set to true shows the refresh control (or stop control while 
 
 `var toolbar: GDWebViewNavigationToolbar`<br />
 The navigation toolbar object (read-only).
+
+`var allowJavascriptAlerts: Bool`<br />
+Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`.
+    
 ####Methods
 `func loadURLWithString(URLString: String)`<br />
 Navigates to an URL created from provided string.
@@ -47,14 +51,18 @@ Navigates to the URL.
 `func showsToolbar(show: Bool, animated: Bool)`<br />
 Shows or hides toolbar.
 
+`func evaluateJavaScript(javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?)`<br />
+Evaluates the given JavaScript string.
+
 ####GDWebViewControllerDelegate Methods
 ```swift
 @objc protocol GDWebViewControllerDelegate {
     optional func webViewController(webViewController: GDWebViewController, didChangeURL newURL: NSURL?)
     optional func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
+    optional func webViewController(webViewController: GDWebViewController, didFinishLoading loadedURL: NSURL?)
     optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
-    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void);
-    optional func webViewController(webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void);
+    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
+    optional func webViewController(webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)
 }
 ```
 

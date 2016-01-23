@@ -27,12 +27,13 @@ enum GDWebViewControllerProgressIndicatorStyle {
 @objc protocol GDWebViewControllerDelegate {
     optional func webViewController(webViewController: GDWebViewController, didChangeURL newURL: NSURL?)
     optional func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
+    optional func webViewController(webViewController: GDWebViewController, didFinishLoading loadedURL: NSURL?)
     optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
-    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void);
-    optional func webViewController(webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void);
+    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
+    optional func webViewController(webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)
 }
 
-class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavigationToolbarDelegate {
+class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, GDWebViewNavigationToolbarDelegate {
     
     // MARK: Public Properties
     
@@ -80,6 +81,9 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
             return toolbarContainer
         }
     }
+    
+    /** Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`. */
+    var allowJavascriptAlerts = true
     
     // MARK: Private Properties
     private var webView: WKWebView!
@@ -130,6 +134,17 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     */
     func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0) {
         webView.loadRequest(NSURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval))
+    }
+    
+    /**
+     Evaluates the given JavaScript string.
+     - parameter javaScriptString: The JavaScript string to evaluate.
+     - parameter completionHandler: A block to invoke when script evaluation completes or fails.
+     
+     The completionHandler is passed the result of the script evaluation or an error.
+    */
+    func evaluateJavaScript(javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?) {
+        webView.evaluateJavaScript(javaScriptString, completionHandler: completionHandler)
     }
     
     /**
@@ -196,6 +211,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
         showLoading(false)
         backForwardListChanged()
+        delegate?.webViewController?(self, didFinishLoading: webView.URL)
     }
     
     func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
@@ -227,6 +243,21 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
                 self.showError("This navigation response is prohibited.")
             }
         }) ?? decisionHandler(WKNavigationResponsePolicy.Allow)
+    }
+    
+    // MARK: WKUIDelegate Methods
+    
+    func webView(webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: () -> Void) {
+        if !allowJavascriptAlerts {
+            return
+        }
+        
+        let alertController: UIAlertController = UIAlertController(title: message, message: nil, preferredStyle: .Alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: {(action: UIAlertAction) -> Void in
+            completionHandler()
+        }))
+        
+        self.presentViewController(alertController, animated: true, completion: nil)
     }
     
     // MARK: Some Private Methods
@@ -373,6 +404,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, GDWebViewNavi
     func commonInit() {
         webView = WKWebView()
         webView.navigationDelegate = self
+        webView.UIDelegate = self
         webView.translatesAutoresizingMaskIntoConstraints = false
         
         toolbarContainer = GDWebViewNavigationToolbar(delegate: self)
