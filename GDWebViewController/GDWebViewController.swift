@@ -215,9 +215,11 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     }
     
     func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
-        delegate?.webViewController?(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
-            completionHandler(disposition, credential)
-        }) ?? completionHandler(.PerformDefaultHandling, nil)
+        guard
+            ((delegate?.webViewController?(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
+                completionHandler(disposition, credential)
+            })) != nil)
+        else { completionHandler(.PerformDefaultHandling, nil); return }
     }
     
     func webView(webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
@@ -228,21 +230,25 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     }
     
     func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
-        delegate?.webViewController?(self, decidePolicyForNavigationAction: navigationAction, decisionHandler: { (policy) -> Void in
-            decisionHandler(policy)
-            if policy == .Cancel {
-                self.showError("This navigation is prohibited.")
-            }
-        }) ?? decisionHandler(WKNavigationActionPolicy.Allow)
+        guard
+            ((delegate?.webViewController?(self, decidePolicyForNavigationAction: navigationAction, decisionHandler: { (policy) -> Void in
+                decisionHandler(policy)
+                if policy == .Cancel {
+                    self.showError("This navigation is prohibited.")
+                }
+            })) != nil)
+        else { decisionHandler(WKNavigationActionPolicy.Allow); return }
     }
     
     func webView(webView: WKWebView, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void) {
-        delegate?.webViewController?(self, decidePolicyForNavigationResponse: navigationResponse, decisionHandler: { (policy) -> Void in
-            decisionHandler(policy)
-            if policy == .Cancel {
-                self.showError("This navigation response is prohibited.")
-            }
-        }) ?? decisionHandler(WKNavigationResponsePolicy.Allow)
+        guard
+            ((delegate?.webViewController?(self, decidePolicyForNavigationResponse: navigationResponse, decisionHandler: { (policy) -> Void in
+                decisionHandler(policy)
+                if policy == .Cancel {
+                    self.showError("This navigation response is prohibited.")
+                }
+            })) != nil)
+        else { decisionHandler(WKNavigationResponsePolicy.Allow); return }
     }
     
     // MARK: WKUIDelegate Methods
