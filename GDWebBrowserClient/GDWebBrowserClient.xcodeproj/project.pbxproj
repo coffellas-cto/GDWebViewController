@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9A340E451C53A0270030673F /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9A340E441C53A0270030673F /* README.md */; };
 		9ACD55851A311070009570EE /* GDWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD55841A311070009570EE /* GDWebViewController.swift */; };
 		9ACD55871A3110BA009570EE /* GDWebViewNavigationToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ACD55861A3110BA009570EE /* GDWebViewNavigationToolbar.swift */; };
 		9AF407951A3000F600CEC89A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF407941A3000F600CEC89A /* AppDelegate.swift */; };
@@ -227,7 +226,6 @@
 			files = (
 				9ACD55871A3110BA009570EE /* GDWebViewNavigationToolbar.swift in Sources */,
 				9ACD55851A311070009570EE /* GDWebViewController.swift in Sources */,
-				9A340E451C53A0270030673F /* README.md in Sources */,
 				9AF407951A3000F600CEC89A /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,10 +366,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -388,10 +383,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = GDWebBrowserClientTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "Uknown.$(PRODUCT_NAME:rfc1034identifier)";
