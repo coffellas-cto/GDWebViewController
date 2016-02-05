@@ -348,6 +348,18 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
         }
     }
     
+    // MARK: Overrides
+    
+    // Override this property getter to show bottom toolbar above other toolbars
+    override var edgesForExtendedLayout: UIRectEdge {
+        get {
+            return UIRectEdge(rawValue: super.edgesForExtendedLayout.rawValue ^ UIRectEdge.Bottom.rawValue)
+        }
+        set {
+            super.edgesForExtendedLayout = newValue
+        }
+    }
+    
     // MARK: Life Cycle
     
     override func viewDidLoad() {
