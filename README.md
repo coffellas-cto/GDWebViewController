@@ -20,38 +20,60 @@ You can download `GDWebBrowserClient` project as well to see how it can be used.
 
 ## GDWebViewController Interface
 ####Properties
-`weak var delegate: GDWebViewControllerDelegate?`<br />
+```swift
+weak var delegate: GDWebViewControllerDelegate?
+```
 An object to serve as a delegate which conforms to GDWebViewNavigationToolbarDelegate protocol.
 
-`var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle = .Both`<br />
+```swift
+var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle = .Both
+```
 The style of progress indication visualization. Can be one of four values: .ActivityIndicator, .ProgressView, .Both, .None
 
-`var allowsBackForwardNavigationGestures: Bool`<br />
+```swift
+var allowsBackForwardNavigationGestures: Bool
+```
 A Boolean value indicating whether horizontal swipe gestures will trigger back-forward list navigations. The default value is false.
 
-`var showsToolbar: Bool`<br />
+```swift
+var showsToolbar: Bool
+```
 A boolean value if set to true shows the toolbar; otherwise, hides it.
 
-`var showsStopRefreshControl: Bool`<br />
+```swift
+var showsStopRefreshControl: Bool
+```
 A boolean value if set to true shows the refresh control (or stop control while loading) on the toolbar; otherwise, hides it.
 
-`var toolbar: GDWebViewNavigationToolbar`<br />
+```swift
+var toolbar: GDWebViewNavigationToolbar
+```
 The navigation toolbar object (read-only).
 
-`var allowJavaScriptAlerts: Bool`<br />
+```swift
+var allowJavaScriptAlerts: Bool
+```
 Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`.
     
 ####Methods
-`func loadURLWithString(URLString: String)`<br />
+```swift
+func loadURLWithString(URLString: String)
+```
 Navigates to an URL created from provided string.
 
-`func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0)`<br />
+```swift
+func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0)
+```
 Navigates to the URL.
 
-`func showsToolbar(show: Bool, animated: Bool)`<br />
+```swift
+func showsToolbar(show: Bool, animated: Bool)
+```
 Shows or hides toolbar.
 
-`func evaluateJavaScript(javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?)`<br />
+```swift
+func evaluateJavaScript(javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?)
+```
 Evaluates the given JavaScript string.
 
 ####GDWebViewControllerDelegate Methods
@@ -71,13 +93,19 @@ You must do `import WebKit` if you use last three methods from `GDWebViewControl
 
 ## GDWebViewNavigationToolbar Interface
 ####Properties
-`var toolbarTintColor: UIColor?`<br />
+```swift
+var toolbarTintColor: UIColor?
+```
 The tint color to apply to the toolbar button items.
 
-`var toolbarBackgroundColor: UIColor?`<br />
+```swift
+var toolbarBackgroundColor: UIColor?
+```
 The toolbar's background color.
 
-`var toolbarTranslucent: Bool`<br />
+```swift
+var toolbarTranslucent: Bool
+```
 A Boolean value that indicates whether the toolbar is translucent (true) or not (false).
 
 ## License
