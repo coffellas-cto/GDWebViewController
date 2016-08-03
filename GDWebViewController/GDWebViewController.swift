@@ -208,12 +208,6 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
         showError(error.localizedDescription)
     }
     
-    func webView(webView: WKWebView, didFinishNavigation navigation: WKNavigation!) {
-        showLoading(false)
-        backForwardListChanged()
-        delegate?.webViewController?(self, didFinishLoading: webView.URL)
-    }
-    
     func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
         guard ((delegate?.webViewController?(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
                 completionHandler(disposition, credential)
@@ -343,6 +337,14 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
             delegate?.webViewController?(self, didChangeURL: webView.URL)
         case "title":
             delegate?.webViewController?(self, didChangeTitle: webView.title)
+        case "loading":
+            if let val = change?[NSKeyValueChangeNewKey] as? Bool {
+                if !val {
+                    showLoading(false)
+                    backForwardListChanged()
+                    delegate?.webViewController?(self, didFinishLoading: webView.URL)
+                }
+            }
         default:
             super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
         }
@@ -383,6 +385,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
         webView.addObserver(self, forKeyPath: "estimatedProgress", options: .New, context: nil)
         webView.addObserver(self, forKeyPath: "URL", options: .New, context: nil)
         webView.addObserver(self, forKeyPath: "title", options: .New, context: nil)
+        webView.addObserver(self, forKeyPath: "loading", options: .New, context: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -390,6 +393,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
         webView.removeObserver(self, forKeyPath: "estimatedProgress")
         webView.removeObserver(self, forKeyPath: "URL")
         webView.removeObserver(self, forKeyPath: "title")
+        webView.removeObserver(self, forKeyPath: "loading")
     }
     
     override func viewDidAppear(animated: Bool) {
