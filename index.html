@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Gdwebviewcontroller by coffellas-cto</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Gdwebviewcontroller</h1>
+      <h2 class="project-tagline">WKWebview browser view controller in Swift</h2>
+      <a href="https://github.com/coffellas-cto/GDWebViewController" class="btn">View on GitHub</a>
+      <a href="https://github.com/coffellas-cto/GDWebViewController/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/coffellas-cto/GDWebViewController/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="gdwebviewcontroller-v13" class="anchor" href="#gdwebviewcontroller-v13" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GDWebViewController v1.3</h1>
+
+<p>A simple view controller for navigating web pages using WKWebView. iOS 8.1+.</p>
+
+<p>Supports Swift 2.0 and iOS 9 SDK.
+For Swift 1.2 support go <a href="https://github.com/coffellas-cto/GDWebViewController/releases/tag/v1.0">here</a></p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/3193877/7665617/29a8672a-fbc9-11e4-98cf-41fec0f6c403.gif" alt="App Screenshots"></p>
+
+<h2>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Description</h2>
+
+<ul>
+<li>A browser-like view controller to support web pages navigation in your Swift app.</li>
+<li>Supports back-forward navigation and page refresh action.</li>
+<li>Supports back-forward swipe gestures.</li>
+<li>Has built-in activity indicators (both progress view and activity indicator).</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Just grab two files <code>GDWebViewController.swift</code> and <code>GDWebViewNavigationToolbar.swift</code> into your project.<br>
+You can download <code>GDWebBrowserClient</code> project as well to see how it can be used.</p>
+
+<h2>
+<a id="gdwebviewcontroller-interface" class="anchor" href="#gdwebviewcontroller-interface" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GDWebViewController Interface</h2>
+
+<h4>
+<a id="properties" class="anchor" href="#properties" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Properties</h4>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">weak</span> <span class="pl-k">var</span> delegate: GDWebViewControllerDelegate?</pre></div>
+
+<p>An object to serve as a delegate which conforms to GDWebViewNavigationToolbarDelegate protocol.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle <span class="pl-k">=</span> <span class="pl-k">.</span>Both</pre></div>
+
+<p>The style of progress indication visualization. Can be one of four values: .ActivityIndicator, .ProgressView, .Both, .None</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> allowsBackForwardNavigationGestures: <span class="pl-c1">Bool</span></pre></div>
+
+<p>A Boolean value indicating whether horizontal swipe gestures will trigger back-forward list navigations. The default value is false.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> showsToolbar: <span class="pl-c1">Bool</span></pre></div>
+
+<p>A boolean value if set to true shows the toolbar; otherwise, hides it.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> showsStopRefreshControl: <span class="pl-c1">Bool</span></pre></div>
+
+<p>A boolean value if set to true shows the refresh control (or stop control while loading) on the toolbar; otherwise, hides it.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> toolbar: GDWebViewNavigationToolbar</pre></div>
+
+<p>The navigation toolbar object (read-only).</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> allowJavaScriptAlerts: <span class="pl-c1">Bool</span></pre></div>
+
+<p>Boolean flag which indicates whether JavaScript alerts are allowed. Default is <code>true</code>.</p>
+
+<h4>
+<a id="methods" class="anchor" href="#methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Methods</h4>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">func</span> <span class="pl-en">loadURLWithString</span>(URLString: <span class="pl-c1">String</span>)</pre></div>
+
+<p>Navigates to an URL created from provided string.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">func</span> <span class="pl-en">loadURL</span>(URL: NSURL, cachePolicy: NSURLRequestCachePolicy <span class="pl-k">=</span> <span class="pl-k">.</span>UseProtocolCachePolicy, timeoutInterval: NSTimeInterval <span class="pl-k">=</span> <span class="pl-c1">0</span>)</pre></div>
+
+<p>Navigates to the URL.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">func</span> <span class="pl-en">showsToolbar</span>(show: <span class="pl-c1">Bool</span>, animated: <span class="pl-c1">Bool</span>)</pre></div>
+
+<p>Shows or hides toolbar.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">func</span> <span class="pl-en">evaluateJavaScript</span>(javaScriptString: <span class="pl-c1">String</span>, completionHandler: ((<span class="pl-c1">AnyObject</span>?, NSError?) <span class="pl-k">-&gt;</span> <span class="pl-c1">Void</span>)?)</pre></div>
+
+<p>Evaluates the given JavaScript string.</p>
+
+<h4>
+<a id="gdwebviewcontrollerdelegate-methods" class="anchor" href="#gdwebviewcontrollerdelegate-methods" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GDWebViewControllerDelegate Methods</h4>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">@objc</span> <span class="pl-k">protocol</span> GDWebViewControllerDelegate {
+    <span class="pl-k">optional</span> <span class="pl-k">func</span> <span class="pl-en">webViewController</span>(webViewController: GDWebViewController, <span class="pl-en">didChangeURL</span> <span class="pl-smi">newURL</span>: NSURL?)
+    <span class="pl-k">optional</span> <span class="pl-k">func</span> <span class="pl-en">webViewController</span>(webViewController: GDWebViewController, <span class="pl-en">didChangeTitle</span> <span class="pl-smi">newTitle</span>: NSString?)
+    <span class="pl-k">optional</span> <span class="pl-k">func</span> <span class="pl-en">webViewController</span>(webViewController: GDWebViewController, <span class="pl-en">didFinishLoading</span> <span class="pl-smi">loadedURL</span>: NSURL?)
+    <span class="pl-k">optional</span> <span class="pl-k">func</span> <span class="pl-en">webViewController</span>(webViewController: GDWebViewController, <span class="pl-en">decidePolicyForNavigationAction</span> <span class="pl-smi">navigationAction</span>: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) <span class="pl-k">-&gt;</span> <span class="pl-c1">Void</span>)
+    <span class="pl-k">optional</span> <span class="pl-k">func</span> <span class="pl-en">webViewController</span>(webViewController: GDWebViewController, <span class="pl-en">decidePolicyForNavigationResponse</span> <span class="pl-smi">navigationResponse</span>: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) <span class="pl-k">-&gt;</span> <span class="pl-c1">Void</span>)
+    <span class="pl-k">optional</span> <span class="pl-k">func</span> <span class="pl-en">webViewController</span>(webViewController: GDWebViewController, <span class="pl-en">didReceiveAuthenticationChallenge</span> <span class="pl-smi">challenge</span>: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential<span class="pl-k">!</span>) <span class="pl-k">-&gt;</span> <span class="pl-c1">Void</span>)
+}</pre></div>
+
+<p>Notice:<br>
+You must do <code>import WebKit</code> if you use last three methods from <code>GDWebViewControllerDelegate</code> description.</p>
+
+<h2>
+<a id="gdwebviewnavigationtoolbar-interface" class="anchor" href="#gdwebviewnavigationtoolbar-interface" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>GDWebViewNavigationToolbar Interface</h2>
+
+<h4>
+<a id="properties-1" class="anchor" href="#properties-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Properties</h4>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> toolbarTintColor: UIColor?</pre></div>
+
+<p>The tint color to apply to the toolbar button items.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> toolbarBackgroundColor: UIColor?</pre></div>
+
+<p>The toolbar's background color.</p>
+
+<div class="highlight highlight-source-swift"><pre><span class="pl-k">var</span> toolbarTranslucent: <span class="pl-c1">Bool</span></pre></div>
+
+<p>A Boolean value that indicates whether the toolbar is translucent (true) or not (false).</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
+
+<p>Published under MIT license. If you have any feature requests, please create an issue. Smart pull requests are also welcome.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/coffellas-cto/GDWebViewController">Gdwebviewcontroller</a> is maintained by <a href="https://github.com/coffellas-cto">coffellas-cto</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
