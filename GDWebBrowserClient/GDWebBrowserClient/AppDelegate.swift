@@ -25,66 +25,66 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
     
     // MARK: GDWebViewControllerDelegate Methods
     
-    func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?) {
+    func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?) {
         navVC.navigationBar.topItem?.title = newTitle as? String
     }
     
-    func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
-        if let URL = navigationAction.request.URL as NSURL?,
-            host = URL.host as NSString?
+    func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
+        if let URL = navigationAction.request.url as URL?,
+            let host = URL.host as NSString?
         {
             let testSubdomain = "." + gHost
-            if host as String == gHost || host.rangeOfString(testSubdomain, options: .CaseInsensitiveSearch).location != NSNotFound {
-                decisionHandler(.Allow)
+            if host as String == gHost || host.range(of: testSubdomain, options: .caseInsensitive).location != NSNotFound {
+                decisionHandler(.allow)
                 return
             }
         }
         
-        print(navigationAction.request.URL?.host)
-        decisionHandler(.Cancel)
+        print(navigationAction.request.url?.host)
+        decisionHandler(.cancel)
     }
     
-    func webViewController(webViewController: GDWebViewController, didFinishLoading loadedURL: NSURL?) {
+    func webViewController(_ webViewController: GDWebViewController, didFinishLoading loadedURL: URL?) {
         if gShowAlertOnDidFinishLoading {
             webViewController.evaluateJavaScript("alert('Loaded!')", completionHandler: nil)
         }
     }
     
     // MARK: Life Cycle
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        window = UIWindow(frame: UIScreen.main.bounds)
         navVC.setViewControllers([webVC], animated: false)
         window?.rootViewController = navVC
         window?.makeKeyAndVisible()
         
         webVC.delegate = self
         webVC.loadURLWithString(gHost)
-        webVC.toolbar.toolbarTintColor = UIColor.darkGrayColor()
-        webVC.toolbar.toolbarBackgroundColor = UIColor.whiteColor()
+        webVC.toolbar.toolbarTintColor = UIColor.darkGray
+        webVC.toolbar.toolbarBackgroundColor = UIColor.white
         webVC.toolbar.toolbarTranslucent = false
         webVC.allowsBackForwardNavigationGestures = true
         
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW,Int64(1 * Double(NSEC_PER_SEC))),dispatch_get_main_queue(), {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(1 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC), execute: {
             self.webVC.showToolbar(true, animated: true)
         })
         
         return true
     }
     
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
     }
     
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
     }
     
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
     }
     
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
     }
     
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
     }
     
 }
