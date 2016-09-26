@@ -17,10 +17,10 @@
 import UIKit
 
 @objc protocol GDWebViewNavigationToolbarDelegate {
-    func webViewNavigationToolbarGoBack(toolbar: GDWebViewNavigationToolbar)
-    func webViewNavigationToolbarGoForward(toolbar: GDWebViewNavigationToolbar)
-    func webViewNavigationToolbarRefresh(toolbar: GDWebViewNavigationToolbar)
-    func webViewNavigationToolbarStop(toolbar: GDWebViewNavigationToolbar)
+    func webViewNavigationToolbarGoBack(_ toolbar: GDWebViewNavigationToolbar)
+    func webViewNavigationToolbarGoForward(_ toolbar: GDWebViewNavigationToolbar)
+    func webViewNavigationToolbarRefresh(_ toolbar: GDWebViewNavigationToolbar)
+    func webViewNavigationToolbarStop(_ toolbar: GDWebViewNavigationToolbar)
 }
 
 class GDWebViewNavigationToolbar: UIView {
@@ -86,7 +86,7 @@ class GDWebViewNavigationToolbar: UIView {
         set(value) {
             _toolbarTranslucent = value
             if let toolbar = self.toolbar {
-                toolbar.translucent = _toolbarTranslucent
+                toolbar.isTranslucent = _toolbarTranslucent
             }
         }
     }
@@ -111,24 +111,24 @@ class GDWebViewNavigationToolbar: UIView {
     
     // MARK: Private Properties
     
-    private var _toolbar: UIToolbar!
-    private lazy var _backButtonItem: UIBarButtonItem = {
-        let backButtonItem = UIBarButtonItem(title: "\u{25C0}\u{FE0E}", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(GDWebViewNavigationToolbar.goBack))
-        backButtonItem.enabled = false
+    fileprivate var _toolbar: UIToolbar!
+    fileprivate lazy var _backButtonItem: UIBarButtonItem = {
+        let backButtonItem = UIBarButtonItem(title: "\u{25C0}\u{FE0E}", style: UIBarButtonItemStyle.plain, target: self, action: #selector(GDWebViewNavigationToolbar.goBack))
+        backButtonItem.isEnabled = false
         return backButtonItem
         }()
-    private lazy var _forwardButtonItem: UIBarButtonItem = {
-        let forwardButtonItem = UIBarButtonItem(title: "\u{25B6}\u{FE0E}", style: UIBarButtonItemStyle.Plain, target: self, action: #selector(GDWebViewNavigationToolbar.goForward))
-        forwardButtonItem.enabled = false
+    fileprivate lazy var _forwardButtonItem: UIBarButtonItem = {
+        let forwardButtonItem = UIBarButtonItem(title: "\u{25B6}\u{FE0E}", style: UIBarButtonItemStyle.plain, target: self, action: #selector(GDWebViewNavigationToolbar.goForward))
+        forwardButtonItem.isEnabled = false
         return forwardButtonItem
         }()
-    private lazy var _refreshButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Refresh, target: self, action: #selector(GDWebViewNavigationToolbar.refresh))}()
-    private lazy var _stopButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Stop, target: self, action: #selector(GDWebViewNavigationToolbar.stop))}()
-    private lazy var _flexibleSpace: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)}()
-    private var _toolbarTintColor: UIColor?
-    private var _toolbarBackgroundColor: UIColor?
-    private var _toolbarTranslucent = true
-    private var _showsStopRefreshControl = true
+    fileprivate lazy var _refreshButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.refresh, target: self, action: #selector(GDWebViewNavigationToolbar.refresh))}()
+    fileprivate lazy var _stopButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.stop, target: self, action: #selector(GDWebViewNavigationToolbar.stop))}()
+    fileprivate lazy var _flexibleSpace: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)}()
+    fileprivate var _toolbarTintColor: UIColor?
+    fileprivate var _toolbarBackgroundColor: UIColor?
+    fileprivate var _toolbarTranslucent = true
+    fileprivate var _showsStopRefreshControl = true
     
     // MARK: Public Methods
     
@@ -170,7 +170,7 @@ class GDWebViewNavigationToolbar: UIView {
     // MARK: Life Cycle
     
     init(delegate: GDWebViewNavigationToolbarDelegate) {
-        super.init(frame: CGRectZero)
+        super.init(frame: CGRect.zero)
         self.delegate = delegate
     }
     
@@ -189,11 +189,11 @@ class GDWebViewNavigationToolbar: UIView {
             _toolbar = UIToolbar()
             _toolbar.tintColor = _toolbarTintColor
             _toolbar.backgroundColor = _toolbarBackgroundColor
-            _toolbar.translucent = _toolbarTranslucent
+            _toolbar.isTranslucent = _toolbarTranslucent
             _toolbar.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview(_toolbar)
-            self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
-            self.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
+            self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
+            self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
             
             // Set up _toolbar
             let items = _showsStopRefreshControl ? [_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem] : [_backButtonItem, _forwardButtonItem]

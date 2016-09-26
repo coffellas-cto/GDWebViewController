@@ -17,34 +17,34 @@
 import UIKit
 import WebKit
 
-enum GDWebViewControllerProgressIndicatorStyle {
-    case ActivityIndicator
-    case ProgressView
-    case Both
-    case None
+public enum GDWebViewControllerProgressIndicatorStyle {
+    case activityIndicator
+    case progressView
+    case both
+    case none
 }
 
-@objc protocol GDWebViewControllerDelegate {
-    optional func webViewController(webViewController: GDWebViewController, didChangeURL newURL: NSURL?)
-    optional func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
-    optional func webViewController(webViewController: GDWebViewController, didFinishLoading loadedURL: NSURL?)
-    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
-    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
-    optional func webViewController(webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)
+@objc public protocol GDWebViewControllerDelegate {
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didChangeURL newURL: URL?)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didFinishLoading loadedURL: URL?)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
 
-class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, GDWebViewNavigationToolbarDelegate {
+open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, GDWebViewNavigationToolbarDelegate {
     
     // MARK: Public Properties
     
     /** An object to serve as a delegate which conforms to GDWebViewNavigationToolbarDelegate protocol. */
-    weak var delegate: GDWebViewControllerDelegate?
+    open weak var delegate: GDWebViewControllerDelegate?
     
     /** The style of progress indication visualization. Can be one of four values: .ActivityIndicator, .ProgressView, .Both, .None*/
-    var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle = .Both
+    open var progressIndicatorStyle: GDWebViewControllerProgressIndicatorStyle = .both
     
     /** A Boolean value indicating whether horizontal swipe gestures will trigger back-forward list navigations. The default value is false. */
-    var allowsBackForwardNavigationGestures: Bool {
+    open var allowsBackForwardNavigationGestures: Bool {
         get {
             return webView.allowsBackForwardNavigationGestures
         }
@@ -54,7 +54,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     }
     
     /** A boolean value if set to true shows the toolbar; otherwise, hides it. */
-    var showsToolbar: Bool {
+    open var showsToolbar: Bool {
         set(value) {
             self.toolbarHeight = value ? 44 : 0
         }
@@ -65,7 +65,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     }
     
     /** A boolean value if set to true shows the refresh control (or stop control while loading) on the toolbar; otherwise, hides it. */
-    var showsStopRefreshControl: Bool {
+    open var showsStopRefreshControl: Bool {
         get {
             return toolbarContainer.showsStopRefreshControl
         }
@@ -83,40 +83,40 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     }
     
     /** Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`. */
-    var allowJavaScriptAlerts = true
+    open var allowJavaScriptAlerts = true
     
     // MARK: Private Properties
-    private var webView: WKWebView!
-    private var progressView: UIProgressView!
-    private var toolbarContainer: GDWebViewNavigationToolbar!
-    private var toolbarHeightConstraint: NSLayoutConstraint!
-    private var toolbarHeight: CGFloat = 0
-    private var navControllerUsesBackSwipe: Bool = false
-    lazy private var activityIndicator: UIActivityIndicatorView! = {
+    fileprivate var webView: WKWebView!
+    fileprivate var progressView: UIProgressView!
+    fileprivate var toolbarContainer: GDWebViewNavigationToolbar!
+    fileprivate var toolbarHeightConstraint: NSLayoutConstraint!
+    fileprivate var toolbarHeight: CGFloat = 0
+    fileprivate var navControllerUsesBackSwipe: Bool = false
+    lazy fileprivate var activityIndicator: UIActivityIndicatorView! = {
         var activityIndicator = UIActivityIndicatorView()
         activityIndicator.backgroundColor = UIColor(white: 0, alpha: 0.2)
-        activityIndicator.activityIndicatorViewStyle = .WhiteLarge
+        activityIndicator.activityIndicatorViewStyle = .whiteLarge
         activityIndicator.hidesWhenStopped = true
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(activityIndicator)
         
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[activityIndicator]-0-|", options: [], metrics: nil, views: ["activityIndicator": activityIndicator]))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[activityIndicator]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["activityIndicator": activityIndicator, "toolbarContainer": self.toolbarContainer, "topGuide": self.topLayoutGuide]))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[activityIndicator]-0-|", options: [], metrics: nil, views: ["activityIndicator": activityIndicator]))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topGuide]-0-[activityIndicator]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["activityIndicator": activityIndicator, "toolbarContainer": self.toolbarContainer, "topGuide": self.topLayoutGuide]))
         return activityIndicator
     }()
     
     // MARK: Public Methods
     
     /**
-    Navigates to an URL created from provided string.
-    
-    - parameter URLString: The string that represents an URL.
-    */
+     Navigates to an URL created from provided string.
+     
+     - parameter URLString: The string that represents an URL.
+     */
     
     // TODO: Earlier `scheme` property was optional. Now it isn't true. Need to check that scheme is always
     
-    func loadURLWithString(URLString: String) {
-        if let URL = NSURL(string: URLString) {
+    open func loadURLWithString(_ URLString: String) {
+        if let URL = URL(string: URLString) {
             if (URL.scheme != "") && (URL.host != nil) {
                 loadURL(URL)
             } else {
@@ -126,14 +126,14 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     }
     
     /**
-    Navigates to the URL.
-    
-    - parameter URL: The URL for a request.
-    - parameter cachePolicy: The cache policy for a request. Optional. Default value is .UseProtocolCachePolicy.
-    - parameter timeoutInterval: The timeout interval for a request, in seconds. Optional. Default value is 0.
-    */
-    func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0) {
-        webView.loadRequest(NSURLRequest(URL: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval))
+     Navigates to the URL.
+     
+     - parameter URL: The URL for a request.
+     - parameter cachePolicy: The cache policy for a request. Optional. Default value is .UseProtocolCachePolicy.
+     - parameter timeoutInterval: The timeout interval for a request, in seconds. Optional. Default value is 0.
+     */
+    open func loadURL(_ URL: Foundation.URL, cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy, timeoutInterval: TimeInterval = 0) {
+        webView.load(URLRequest(url: URL, cachePolicy: cachePolicy, timeoutInterval: timeoutInterval))
     }
     
     /**
@@ -142,24 +142,24 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
      - parameter completionHandler: A block to invoke when script evaluation completes or fails.
      
      The completionHandler is passed the result of the script evaluation or an error.
-    */
-    func evaluateJavaScript(javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?) {
-        webView.evaluateJavaScript(javaScriptString, completionHandler: completionHandler)
+     */
+    open func evaluateJavaScript(_ javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?) {
+        webView.evaluateJavaScript(javaScriptString, completionHandler: completionHandler as! ((Any?, Error?) -> Void)?)
     }
     
     /**
-    Shows or hides toolbar.
-    
-    - parameter show: A Boolean value if set to true shows the toolbar; otherwise, hides it.
-    - parameter animated: A Boolean value if set to true animates the transition; otherwise, does not.
-    */
-    func showToolbar(show: Bool, animated: Bool) {
+     Shows or hides toolbar.
+     
+     - parameter show: A Boolean value if set to true shows the toolbar; otherwise, hides it.
+     - parameter animated: A Boolean value if set to true animates the transition; otherwise, does not.
+     */
+    open func showToolbar(_ show: Bool, animated: Bool) {
         self.showsToolbar = show
         
         if toolbarHeightConstraint != nil {
             toolbarHeightConstraint.constant = self.toolbarHeight
             if animated {
-                UIView.animateWithDuration(0.2, animations: { () -> Void in
+                UIView.animate(withDuration: 0.2, animations: { () -> Void in
                     self.view.layoutIfNeeded()
                 })
             } else {
@@ -170,119 +170,119 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     
     // MARK: GDWebViewNavigationToolbarDelegate Methods
     
-    func webViewNavigationToolbarGoBack(toolbar: GDWebViewNavigationToolbar) {
+    func webViewNavigationToolbarGoBack(_ toolbar: GDWebViewNavigationToolbar) {
         webView.goBack()
     }
     
-    func webViewNavigationToolbarGoForward(toolbar: GDWebViewNavigationToolbar) {
+    func webViewNavigationToolbarGoForward(_ toolbar: GDWebViewNavigationToolbar) {
         webView.goForward()
     }
     
-    func webViewNavigationToolbarRefresh(toolbar: GDWebViewNavigationToolbar) {
+    func webViewNavigationToolbarRefresh(_ toolbar: GDWebViewNavigationToolbar) {
         webView.reload()
     }
     
-    func webViewNavigationToolbarStop(toolbar: GDWebViewNavigationToolbar) {
+    func webViewNavigationToolbarStop(_ toolbar: GDWebViewNavigationToolbar) {
         webView.stopLoading()
     }
     
     // MARK: WKNavigationDelegate Methods
     
-    func webView(webView: WKWebView, didCommitNavigation navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
     }
     
-    func webView(webView: WKWebView, didFailNavigation navigation: WKNavigation!, withError error: NSError) {
+    open func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         showLoading(false)
-        if error.code == NSURLErrorCancelled {
+        if error._code == NSURLErrorCancelled {
             return
         }
         
         showError(error.localizedDescription)
     }
     
-    func webView(webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: NSError) {
+    open func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         showLoading(false)
-        if error.code == NSURLErrorCancelled {
+        if error._code == NSURLErrorCancelled {
             return
         }
         showError(error.localizedDescription)
     }
     
-    func webView(webView: WKWebView, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential?) -> Void) {
+    open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         guard ((delegate?.webViewController?(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
-                completionHandler(disposition, credential)
-            })) != nil)
-        else {
-            completionHandler(.PerformDefaultHandling, nil)
-            return
+            completionHandler(disposition, credential)
+        })) != nil)
+            else {
+                completionHandler(.performDefaultHandling, nil)
+                return
         }
     }
     
-    func webView(webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
     }
     
-    func webView(webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    open func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         showLoading(true)
     }
     
-    func webView(webView: WKWebView, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         guard ((delegate?.webViewController?(self, decidePolicyForNavigationAction: navigationAction, decisionHandler: { (policy) -> Void in
-                decisionHandler(policy)
-                if policy == .Cancel {
-                    self.showError("This navigation is prohibited.")
-                }
-            })) != nil)
-        else {
-            decisionHandler(.Allow);
-            return
+            decisionHandler(policy)
+            if policy == .cancel {
+                self.showError("This navigation is prohibited.")
+            }
+        })) != nil)
+            else {
+                decisionHandler(.allow);
+                return
         }
     }
     
-    func webView(webView: WKWebView, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void) {
+    open func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         guard ((delegate?.webViewController?(self, decidePolicyForNavigationResponse: navigationResponse, decisionHandler: { (policy) -> Void in
-                decisionHandler(policy)
-                if policy == .Cancel {
-                    self.showError("This navigation response is prohibited.")
-                }
-            })) != nil)
-        else {
-            decisionHandler(.Allow)
-            return
+            decisionHandler(policy)
+            if policy == .cancel {
+                self.showError("This navigation response is prohibited.")
+            }
+        })) != nil)
+            else {
+                decisionHandler(.allow)
+                return
         }
     }
     
     // MARK: WKUIDelegate Methods
     
-    func webView(webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: () -> Void) {
+    open func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
         if !allowJavaScriptAlerts {
             return
         }
         
-        let alertController: UIAlertController = UIAlertController(title: message, message: nil, preferredStyle: .Alert)
-        alertController.addAction(UIAlertAction(title: "OK", style: .Cancel, handler: {(action: UIAlertAction) -> Void in
+        let alertController: UIAlertController = UIAlertController(title: message, message: nil, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .cancel, handler: {(action: UIAlertAction) -> Void in
             completionHandler()
         }))
         
-        self.presentViewController(alertController, animated: true, completion: nil)
+        self.present(alertController, animated: true, completion: nil)
     }
     
     // MARK: Some Private Methods
     
-    private func showError(errorString: String?) {
-        let alertView = UIAlertController(title: "Error", message: errorString, preferredStyle: .Alert)
-        alertView.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-        self.presentViewController(alertView, animated: true, completion: nil)
+    fileprivate func showError(_ errorString: String?) {
+        let alertView = UIAlertController(title: "Error", message: errorString, preferredStyle: .alert)
+        alertView.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alertView, animated: true, completion: nil)
     }
     
-    private func showLoading(animate: Bool) {
+    fileprivate func showLoading(_ animate: Bool) {
         if animate {
-            if (progressIndicatorStyle == .ActivityIndicator) || (progressIndicatorStyle == .Both) {
+            if (progressIndicatorStyle == .activityIndicator) || (progressIndicatorStyle == .both) {
                 activityIndicator.startAnimating()
             }
             
             toolbar.loadDidStart()
         } else if activityIndicator != nil {
-            if (progressIndicatorStyle == .ActivityIndicator) || (progressIndicatorStyle == .Both) {
+            if (progressIndicatorStyle == .activityIndicator) || (progressIndicatorStyle == .both) {
                 activityIndicator.stopAnimating()
             }
             
@@ -290,72 +290,72 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
         }
     }
     
-    private func progressChanged(newValue: NSNumber) {
+    fileprivate func progressChanged(_ newValue: NSNumber) {
         if progressView == nil {
             progressView = UIProgressView()
             progressView.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(progressView)
             
-            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[progressView]-0-|", options: [], metrics: nil, views: ["progressView": progressView]))
-            self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[progressView(2)]", options: [], metrics: nil, views: ["progressView": progressView, "topGuide": self.topLayoutGuide]))
+            self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[progressView]-0-|", options: [], metrics: nil, views: ["progressView": progressView]))
+            self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topGuide]-0-[progressView(2)]", options: [], metrics: nil, views: ["progressView": progressView, "topGuide": self.topLayoutGuide]))
         }
         
         progressView.progress = newValue.floatValue
         if progressView.progress == 1 {
             progressView.progress = 0
-            UIView.animateWithDuration(0.2, animations: { () -> Void in
+            UIView.animate(withDuration: 0.2, animations: { () -> Void in
                 self.progressView.alpha = 0
             })
         } else if progressView.alpha == 0 {
-            UIView.animateWithDuration(0.2, animations: { () -> Void in
+            UIView.animate(withDuration: 0.2, animations: { () -> Void in
                 self.progressView.alpha = 1
             })
         }
     }
     
-    private func backForwardListChanged() {
+    fileprivate func backForwardListChanged() {
         if self.navControllerUsesBackSwipe && self.allowsBackForwardNavigationGestures {
-            self.navigationController?.interactivePopGestureRecognizer?.enabled = !webView.canGoBack
+            self.navigationController?.interactivePopGestureRecognizer?.isEnabled = !webView.canGoBack
         }
         
-        toolbarContainer.backButtonItem?.enabled = webView.canGoBack
-        toolbarContainer.forwardButtonItem?.enabled = webView.canGoForward
+        toolbarContainer.backButtonItem?.isEnabled = webView.canGoBack
+        toolbarContainer.forwardButtonItem?.isEnabled = webView.canGoForward
     }
     
     // MARK: KVO
     
-    override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override open func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard let keyPath = keyPath else {return}
         switch keyPath {
         case "estimatedProgress":
-            if (progressIndicatorStyle == .ProgressView) || (progressIndicatorStyle == .Both) {
-                if let newValue = change?[NSKeyValueChangeNewKey] as? NSNumber {
+            if (progressIndicatorStyle == .progressView) || (progressIndicatorStyle == .both) {
+                if let newValue = change?[NSKeyValueChangeKey.newKey] as? NSNumber {
                     progressChanged(newValue)
                 }
             }
         case "URL":
-            delegate?.webViewController?(self, didChangeURL: webView.URL)
+            delegate?.webViewController?(self, didChangeURL: webView.url)
         case "title":
-            delegate?.webViewController?(self, didChangeTitle: webView.title)
+            delegate?.webViewController?(self, didChangeTitle: webView.title as NSString?)
         case "loading":
-            if let val = change?[NSKeyValueChangeNewKey] as? Bool {
+            if let val = change?[NSKeyValueChangeKey.newKey] as? Bool {
                 if !val {
                     showLoading(false)
                     backForwardListChanged()
-                    delegate?.webViewController?(self, didFinishLoading: webView.URL)
+                    delegate?.webViewController?(self, didFinishLoading: webView.url)
                 }
             }
         default:
-            super.observeValueForKeyPath(keyPath, ofObject: object, change: change, context: context)
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
     
     // MARK: Overrides
     
     // Override this property getter to show bottom toolbar above other toolbars
-    override var edgesForExtendedLayout: UIRectEdge {
+    override open var edgesForExtendedLayout: UIRectEdge {
         get {
-            return UIRectEdge(rawValue: super.edgesForExtendedLayout.rawValue ^ UIRectEdge.Bottom.rawValue)
+            return UIRectEdge(rawValue: super.edgesForExtendedLayout.rawValue ^ UIRectEdge.bottom.rawValue)
         }
         set {
             super.edgesForExtendedLayout = newValue
@@ -364,31 +364,31 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     
     // MARK: Life Cycle
     
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
         
         // Set up toolbarContainer
         self.view.addSubview(toolbarContainer)
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[toolbarContainer]-0-|", options: [], metrics: nil, views: ["toolbarContainer": toolbarContainer]))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:[toolbarContainer]-0-|", options: [], metrics: nil, views: ["toolbarContainer": toolbarContainer]))
-        toolbarHeightConstraint = NSLayoutConstraint(item: toolbarContainer, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .NotAnAttribute, multiplier: 1, constant: toolbarHeight)
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[toolbarContainer]-0-|", options: [], metrics: nil, views: ["toolbarContainer": toolbarContainer]))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[toolbarContainer]-0-|", options: [], metrics: nil, views: ["toolbarContainer": toolbarContainer]))
+        toolbarHeightConstraint = NSLayoutConstraint(item: toolbarContainer, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: toolbarHeight)
         toolbarContainer.addConstraint(toolbarHeightConstraint)
         
         // Set up webView
         self.view.addSubview(webView)
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("|-0-[webView]-0-|", options: [], metrics: nil, views: ["webView": webView]))
-        self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[webView]-0-|", options: [], metrics: nil, views: ["webView": webView]))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        webView.addObserver(self, forKeyPath: "estimatedProgress", options: .New, context: nil)
-        webView.addObserver(self, forKeyPath: "URL", options: .New, context: nil)
-        webView.addObserver(self, forKeyPath: "title", options: .New, context: nil)
-        webView.addObserver(self, forKeyPath: "loading", options: .New, context: nil)
+        webView.addObserver(self, forKeyPath: "estimatedProgress", options: .new, context: nil)
+        webView.addObserver(self, forKeyPath: "URL", options: .new, context: nil)
+        webView.addObserver(self, forKeyPath: "title", options: .new, context: nil)
+        webView.addObserver(self, forKeyPath: "loading", options: .new, context: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         webView.removeObserver(self, forKeyPath: "estimatedProgress")
         webView.removeObserver(self, forKeyPath: "URL")
@@ -396,35 +396,36 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
         webView.removeObserver(self, forKeyPath: "loading")
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let navVC = self.navigationController {
             if let gestureRecognizer = navVC.interactivePopGestureRecognizer {
-                navControllerUsesBackSwipe = gestureRecognizer.enabled
+                navControllerUsesBackSwipe = gestureRecognizer.isEnabled
             } else {
                 navControllerUsesBackSwipe = false
             }
         }
     }
     
-    override func viewDidDisappear(animated: Bool) {
+    override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         if navControllerUsesBackSwipe {
-            self.navigationController?.interactivePopGestureRecognizer?.enabled = true
+            self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         }
     }
     
-    override func didReceiveMemoryWarning() {
+    
+    override open func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         webView.stopLoading()
     }
     
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.commonInit()
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.commonInit()
     }
@@ -432,7 +433,7 @@ class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate,
     func commonInit() {
         webView = WKWebView()
         webView.navigationDelegate = self
-        webView.UIDelegate = self
+        webView.uiDelegate = self
         webView.translatesAutoresizingMaskIntoConstraints = false
         
         toolbarContainer = GDWebViewNavigationToolbar(delegate: self)
