@@ -60,8 +60,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
         
         webVC.delegate = self
         webVC.loadURLWithString(gHost)
-        webVC.toolbar.toolbarTintColor = UIColor.red
-        webVC.toolbar.toolbarBackgroundColor = UIColor.black
+        webVC.toolbar.toolbarTintColor = UIColor.darkGray
+        webVC.toolbar.toolbarBackgroundColor = UIColor.white
         webVC.toolbar.toolbarTranslucent = false
         webVC.allowsBackForwardNavigationGestures = true
         
