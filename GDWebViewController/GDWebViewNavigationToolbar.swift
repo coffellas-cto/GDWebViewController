@@ -72,7 +72,7 @@ class GDWebViewNavigationToolbar: UIView {
         set(value) {
             _toolbarBackgroundColor = value
             if let toolbar = self.toolbar {
-                toolbar.backgroundColor = _toolbarBackgroundColor
+                toolbar.barTintColor = _toolbarBackgroundColor
             }
         }
     }
@@ -188,13 +188,13 @@ class GDWebViewNavigationToolbar: UIView {
         if (_toolbar == nil) {
             _toolbar = UIToolbar()
             _toolbar.tintColor = _toolbarTintColor
-            _toolbar.backgroundColor = _toolbarBackgroundColor
+            _toolbar.barTintColor = _toolbarBackgroundColor
             _toolbar.isTranslucent = _toolbarTranslucent
             _toolbar.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview(_toolbar)
             self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
             self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
-            
+			
             // Set up _toolbar
             let items = _showsStopRefreshControl ? [_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem] : [_backButtonItem, _forwardButtonItem]
             _toolbar.setItems(items, animated: false)

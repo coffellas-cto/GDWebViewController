@@ -1,10 +1,10 @@
-GDWebViewController v1.3
+GDWebViewController v1.4
 ===================
 
 A simple view controller for navigating web pages using WKWebView. iOS 8.1+.
 
-Supports Swift 2.0 and iOS 9 SDK.
-For Swift 1.2 support go [here](https://github.com/coffellas-cto/GDWebViewController/releases/tag/v1.0)
+Supports Swift 3.0 and iOS 10 SDK.
+For Swift 2 support go [here](https://github.com/coffellas-cto/GDWebViewController/releases/tag/v1.3)
 
 ![App Screenshots](https://cloud.githubusercontent.com/assets/3193877/7665617/29a8672a-fbc9-11e4-98cf-41fec0f6c403.gif)
 
@@ -57,34 +57,34 @@ Boolean flag which indicates whether JavaScript alerts are allowed. Default is `
     
 ####Methods
 ```swift
-func loadURLWithString(URLString: String)
+func loadURLWithString(_ URLString: String)
 ```
 Navigates to an URL created from provided string.
 
 ```swift
-func loadURL(URL: NSURL, cachePolicy: NSURLRequestCachePolicy = .UseProtocolCachePolicy, timeoutInterval: NSTimeInterval = 0)
+func loadURL(_ URL: Foundation.URL, cachePolicy: NSURLRequest.CachePolicy = .useProtocolCachePolicy, timeoutInterval: TimeInterval = 0)
 ```
 Navigates to the URL.
 
 ```swift
-func showsToolbar(show: Bool, animated: Bool)
+func showToolbar(_ show: Bool, animated: Bool)
 ```
 Shows or hides toolbar.
 
 ```swift
-func evaluateJavaScript(javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?)
+func evaluateJavaScript(_ javaScriptString: String, completionHandler: ((AnyObject?, NSError?) -> Void)?)
 ```
 Evaluates the given JavaScript string.
 
 ####GDWebViewControllerDelegate Methods
 ```swift
-@objc protocol GDWebViewControllerDelegate {
-    optional func webViewController(webViewController: GDWebViewController, didChangeURL newURL: NSURL?)
-    optional func webViewController(webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
-    optional func webViewController(webViewController: GDWebViewController, didFinishLoading loadedURL: NSURL?)
-    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
-    optional func webViewController(webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
-    optional func webViewController(webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: NSURLAuthenticationChallenge, completionHandler: (NSURLSessionAuthChallengeDisposition, NSURLCredential!) -> Void)
+@objc public protocol GDWebViewControllerDelegate {
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didChangeURL newURL: URL?)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didFinishLoading loadedURL: URL?)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
+    @objc optional func webViewController(_ webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }
 ```
 
