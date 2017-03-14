@@ -376,8 +376,8 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         
         // Set up webView
         self.view.addSubview(webView)
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[webView]-0-|", options: [], metrics: nil, views: ["webView": webView]))
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["webView": webView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[webView]-0-|", options: [], metrics: nil, views: ["webView": webView as WKWebView]))
+        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["webView": webView as WKWebView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
     }
     
     override open func viewWillAppear(_ animated: Bool) {
