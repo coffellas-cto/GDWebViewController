@@ -1,4 +1,4 @@
-GDWebViewController v1.4
+GDWebViewController v1.4.1
 ===================
 
 A simple view controller for navigating web pages using WKWebView. iOS 8.1+.
