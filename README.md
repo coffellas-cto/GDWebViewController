@@ -1,4 +1,4 @@
-GDWebViewController v1.4
+GDWebViewController v1.4.1
 ===================
 
 A simple view controller for navigating web pages using WKWebView. iOS 8.1+.
@@ -19,7 +19,7 @@ Just grab two files `GDWebViewController.swift` and `GDWebViewNavigationToolbar.
 You can download `GDWebBrowserClient` project as well to see how it can be used.
 
 ## GDWebViewController Interface
-####Properties
+#### Properties
 ```swift
 weak var delegate: GDWebViewControllerDelegate?
 ```
@@ -55,7 +55,7 @@ var allowJavaScriptAlerts: Bool
 ```
 Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`.
     
-####Methods
+#### Methods
 ```swift
 func loadURLWithString(_ URLString: String)
 ```
@@ -76,7 +76,7 @@ func evaluateJavaScript(_ javaScriptString: String, completionHandler: ((AnyObje
 ```
 Evaluates the given JavaScript string.
 
-####GDWebViewControllerDelegate Methods
+#### GDWebViewControllerDelegate Methods
 ```swift
 @objc public protocol GDWebViewControllerDelegate {
     @objc optional func webViewController(_ webViewController: GDWebViewController, didChangeURL newURL: URL?)
@@ -92,7 +92,7 @@ Notice:<br />
 You must do `import WebKit` if you use last three methods from `GDWebViewControllerDelegate` description.
 
 ## GDWebViewNavigationToolbar Interface
-####Properties
+#### Properties
 ```swift
 var toolbarTintColor: UIColor?
 ```
