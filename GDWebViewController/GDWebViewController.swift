@@ -251,6 +251,16 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         }
     }
     
+    
+    open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil, let url = navigationAction.request.url{
+            if url.description.lowercased().range(of: "http://") != nil || url.description.lowercased().range(of: "https://") != nil  {
+                webView.load(navigationAction.request)
+            }
+        }
+        return nil
+    }
+    
     // MARK: WKUIDelegate Methods
     
     open func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
