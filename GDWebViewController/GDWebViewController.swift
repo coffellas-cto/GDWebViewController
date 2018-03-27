@@ -85,8 +85,9 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     /** Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`. */
     open var allowJavaScriptAlerts = true
     
+    public var webView: WKWebView!
+    
     // MARK: Private Properties
-    fileprivate var webView: WKWebView!
     fileprivate var progressView: UIProgressView!
     fileprivate var toolbarContainer: GDWebViewNavigationToolbar!
     fileprivate var toolbarHeightConstraint: NSLayoutConstraint!
@@ -166,6 +167,22 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
                 self.view.layoutIfNeeded()
             }
         }
+    }
+    
+    @objc open func goBack(){
+        webView.goBack()
+    }
+    
+    @objc open func goForward(){
+        webView.goForward()
+    }
+    
+    @objc open func stopLoading(){
+        webView.stopLoading()
+    }
+    
+    @objc open func reload(){
+        webView.reload()
     }
     
     // MARK: GDWebViewNavigationToolbarDelegate Methods
