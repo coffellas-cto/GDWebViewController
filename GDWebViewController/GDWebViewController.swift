@@ -91,7 +91,7 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     open var allowJavaScriptAlerts = true
     
     // MARK: Private Properties
-    fileprivate var webView: WKWebView!
+    open var webView: WKWebView!
     fileprivate var progressView: UIProgressView!
     fileprivate var toolbarContainer: GDWebViewNavigationToolbar!
     fileprivate var toolbarHeightConstraint: NSLayoutConstraint!

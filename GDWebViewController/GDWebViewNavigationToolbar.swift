@@ -151,19 +151,19 @@ class GDWebViewNavigationToolbar: UIView {
     }
     
     // MARK: Navigation Methods
-    @objc func goBack() {
+    @objc public func goBack() {
         delegate?.webViewNavigationToolbarGoBack(self)
     }
     
-    @objc func goForward() {
+    @objc public func goForward() {
         delegate?.webViewNavigationToolbarGoForward(self)
     }
     
-    @objc func refresh() {
+    @objc public func refresh() {
         delegate?.webViewNavigationToolbarRefresh(self)
     }
     
-    @objc func stop() {
+    @objc public func stop() {
         delegate?.webViewNavigationToolbarStop(self)
     }
     
