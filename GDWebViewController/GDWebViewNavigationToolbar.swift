@@ -23,7 +23,7 @@ import UIKit
     func webViewNavigationToolbarStop(_ toolbar: GDWebViewNavigationToolbar)
 }
 
-open class GDWebViewNavigationToolbar: UIView {
+class GDWebViewNavigationToolbar: UIView {
     
     // MARK: Public Properties
     

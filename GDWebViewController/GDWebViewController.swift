@@ -175,19 +175,19 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     
     // MARK: GDWebViewNavigationToolbarDelegate Methods
     
-    func webViewNavigationToolbarGoBack(_ toolbar: GDWebViewNavigationToolbar) {
+    open func webViewNavigationToolbarGoBack(_ toolbar: GDWebViewNavigationToolbar) {
         webView.goBack()
     }
     
-    func webViewNavigationToolbarGoForward(_ toolbar: GDWebViewNavigationToolbar) {
+    open func webViewNavigationToolbarGoForward(_ toolbar: GDWebViewNavigationToolbar) {
         webView.goForward()
     }
     
-    func webViewNavigationToolbarRefresh(_ toolbar: GDWebViewNavigationToolbar) {
+    open func webViewNavigationToolbarRefresh(_ toolbar: GDWebViewNavigationToolbar) {
         webView.reload()
     }
     
-    func webViewNavigationToolbarStop(_ toolbar: GDWebViewNavigationToolbar) {
+    open func webViewNavigationToolbarStop(_ toolbar: GDWebViewNavigationToolbar) {
         webView.stopLoading()
     }
     
