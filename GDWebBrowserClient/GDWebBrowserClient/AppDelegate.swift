@@ -87,5 +87,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
     func applicationWillTerminate(_ application: UIApplication) {
     }
     
+    func webViewViewDidLoad(_ webViewController: GDWebViewController) {
+    }
+    
+    func webViewWillAppear(_ webViewController: GDWebViewController) {
+    }
+    
+    func webViewWillDisappear(_ webViewController: GDWebViewController) {
+    }
+    
+    func webViewDidAppear(_ webViewController: GDWebViewController) {
+    }
+    
+    func webViewDidDisappear(_ webViewController: GDWebViewController) {
+    }
+    
+    
 }
 

@@ -85,6 +85,11 @@ Evaluates the given JavaScript string.
     @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
     @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
     @objc optional func webViewController(_ webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+    @objc optional func webViewWillAppear(_ webViewController: GDWebViewController)
+    @objc optional func webViewDidAppear(_ webViewController: GDWebViewController)
+    @objc optional func webViewWillDisappear(_ webViewController: GDWebViewController)
+    @objc optional func webViewDidDisappear(_ webViewController: GDWebViewController)
+    @objc optional func webViewViewDidLoad(_ webViewController: GDWebViewController)
 }
 ```
 

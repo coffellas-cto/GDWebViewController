@@ -31,6 +31,11 @@ public enum GDWebViewControllerProgressIndicatorStyle {
     @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
     @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
     @objc optional func webViewController(_ webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+    @objc optional func webViewWillAppear(_ webViewController: GDWebViewController)
+    @objc optional func webViewDidAppear(_ webViewController: GDWebViewController)
+    @objc optional func webViewWillDisappear(_ webViewController: GDWebViewController)
+    @objc optional func webViewDidDisappear(_ webViewController: GDWebViewController)
+    @objc optional func webViewViewDidLoad(_ webViewController: GDWebViewController)
 }
 
 open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, GDWebViewNavigationToolbarDelegate {
@@ -378,6 +383,8 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         self.view.addSubview(webView)
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[webView]-0-|", options: [], metrics: nil, views: ["webView": webView as WKWebView]))
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["webView": webView as WKWebView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
+        
+        self.delegate?.webViewViewDidLoad?(self)
     }
     
     override open func viewWillAppear(_ animated: Bool) {
@@ -386,6 +393,8 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         webView.addObserver(self, forKeyPath: "URL", options: .new, context: nil)
         webView.addObserver(self, forKeyPath: "title", options: .new, context: nil)
         webView.addObserver(self, forKeyPath: "loading", options: .new, context: nil)
+        
+        self.delegate?.webViewWillAppear?(self)
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
@@ -394,6 +403,8 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         webView.removeObserver(self, forKeyPath: "URL")
         webView.removeObserver(self, forKeyPath: "title")
         webView.removeObserver(self, forKeyPath: "loading")
+        
+        self.delegate?.webViewWillDisappear?(self)
     }
     
     override open func viewDidAppear(_ animated: Bool) {
@@ -405,6 +416,8 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
                 navControllerUsesBackSwipe = false
             }
         }
+        
+        self.delegate?.webViewDidAppear?(self)
     }
     
     override open func viewDidDisappear(_ animated: Bool) {
@@ -412,6 +425,8 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         if navControllerUsesBackSwipe {
             self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         }
+        
+        self.delegate?.webViewDidDisappear?(self)
     }
     
     
