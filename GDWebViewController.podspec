@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name              = "GDWebViewController"
-  s.version           = "1.5.2"
+  s.version           = "1.5.3"
   s.summary           = "WKWebview browser view controller in Swift"
 
   s.description       = <<-DESC

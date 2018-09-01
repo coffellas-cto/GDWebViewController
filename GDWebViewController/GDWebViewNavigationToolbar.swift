@@ -16,6 +16,14 @@
 
 import UIKit
 
+#if swift(>=4.2)
+fileprivate let barButtonItemStyle = UIBarButtonItem.Style.self
+fileprivate let barButtonSystemItem = UIBarButtonItem.SystemItem.self
+#else
+fileprivate let barButtonItemStyle = UIBarButtonItemStyle.self
+fileprivate let barButtonSystemItem = UIBarButtonSystemItem.self
+#endif
+
 @objc protocol GDWebViewNavigationToolbarDelegate {
     func webViewNavigationToolbarGoBack(_ toolbar: GDWebViewNavigationToolbar)
     func webViewNavigationToolbarGoForward(_ toolbar: GDWebViewNavigationToolbar)
@@ -113,18 +121,18 @@ class GDWebViewNavigationToolbar: UIView {
     
     fileprivate var _toolbar: UIToolbar!
     fileprivate lazy var _backButtonItem: UIBarButtonItem = {
-        let backButtonItem = UIBarButtonItem(title: "\u{25C0}\u{FE0E}", style: UIBarButtonItemStyle.plain, target: self, action: #selector(GDWebViewNavigationToolbar.goBack))
+        let backButtonItem = UIBarButtonItem(title: "\u{25C0}\u{FE0E}", style: barButtonItemStyle.plain, target: self, action: #selector(GDWebViewNavigationToolbar.goBack))
         backButtonItem.isEnabled = false
         return backButtonItem
         }()
     fileprivate lazy var _forwardButtonItem: UIBarButtonItem = {
-        let forwardButtonItem = UIBarButtonItem(title: "\u{25B6}\u{FE0E}", style: UIBarButtonItemStyle.plain, target: self, action: #selector(GDWebViewNavigationToolbar.goForward))
+        let forwardButtonItem = UIBarButtonItem(title: "\u{25B6}\u{FE0E}", style: barButtonItemStyle.plain, target: self, action: #selector(GDWebViewNavigationToolbar.goForward))
         forwardButtonItem.isEnabled = false
         return forwardButtonItem
         }()
-    fileprivate lazy var _refreshButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.refresh, target: self, action: #selector(GDWebViewNavigationToolbar.refresh))}()
-    fileprivate lazy var _stopButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.stop, target: self, action: #selector(GDWebViewNavigationToolbar.stop))}()
-    fileprivate lazy var _flexibleSpace: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)}()
+    fileprivate lazy var _refreshButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: barButtonSystemItem.refresh, target: self, action: #selector(GDWebViewNavigationToolbar.refresh))}()
+    fileprivate lazy var _stopButtonItem: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: barButtonSystemItem.stop, target: self, action: #selector(GDWebViewNavigationToolbar.stop))}()
+    fileprivate lazy var _flexibleSpace: UIBarButtonItem = {UIBarButtonItem(barButtonSystemItem: barButtonSystemItem.flexibleSpace, target: nil, action: nil)}()
     fileprivate var _toolbarTintColor: UIColor?
     fileprivate var _toolbarBackgroundColor: UIColor?
     fileprivate var _toolbarTranslucent = true

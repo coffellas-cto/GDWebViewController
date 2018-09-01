@@ -96,7 +96,11 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     lazy fileprivate var activityIndicator: UIActivityIndicatorView! = {
         var activityIndicator = UIActivityIndicatorView()
         activityIndicator.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        #if swift(>=4.2)
+        activityIndicator.style = .whiteLarge
+        #else
         activityIndicator.activityIndicatorViewStyle = .whiteLarge
+        #endif
         activityIndicator.hidesWhenStopped = true
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(activityIndicator)
