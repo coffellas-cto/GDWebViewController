@@ -47,7 +47,7 @@ public protocol GDWebViewControllerDelegate: class {
     func webViewViewDidLoad(_ webViewController: GDWebViewController)
 }
 
-extension GDWebViewControllerDelegate {
+public extension GDWebViewControllerDelegate {
     func webViewController(_ webViewController: GDWebViewController, didChangeURL newURL: URL?) { }
     func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?) { }
     func webViewController(_ webViewController: GDWebViewController, didFinishLoading loadedURL: URL?) { }
