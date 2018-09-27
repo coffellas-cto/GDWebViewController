@@ -16,14 +16,24 @@
 
 import UIKit
 
-@objc protocol GDWebViewNavigationToolbarDelegate {
+protocol GDWebViewNavigationToolbarDelegate: class {
     func webViewNavigationToolbarGoBack(_ toolbar: GDWebViewNavigationToolbar)
     func webViewNavigationToolbarGoForward(_ toolbar: GDWebViewNavigationToolbar)
     func webViewNavigationToolbarRefresh(_ toolbar: GDWebViewNavigationToolbar)
     func webViewNavigationToolbarStop(_ toolbar: GDWebViewNavigationToolbar)
 }
 
+extension GDWebViewNavigationToolbarDelegate {
+    func webViewNavigationToolbarGoBack(_ toolbar: GDWebViewNavigationToolbar) { }
+    func webViewNavigationToolbarGoForward(_ toolbar: GDWebViewNavigationToolbar) { }
+    func webViewNavigationToolbarRefresh(_ toolbar: GDWebViewNavigationToolbar) { }
+    func webViewNavigationToolbarStop(_ toolbar: GDWebViewNavigationToolbar) { }
+}
+
 class GDWebViewNavigationToolbar: UIView {
+    
+    weak var delegate: GDWebViewNavigationToolbarDelegate?
+    
     
     // MARK: Public Properties
     
@@ -32,7 +42,6 @@ class GDWebViewNavigationToolbar: UIView {
             return _toolbar
         }
     }
-    weak var delegate: GDWebViewNavigationToolbarDelegate?
     var backButtonItem: UIBarButtonItem? {
         get {
             return _backButtonItem
@@ -192,9 +201,18 @@ class GDWebViewNavigationToolbar: UIView {
             _toolbar.isTranslucent = _toolbarTranslucent
             _toolbar.translatesAutoresizingMaskIntoConstraints = false
             self.addSubview(_toolbar)
-            self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
-            self.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[toolbar]-0-|", options: [], metrics: nil, views: ["toolbar": _toolbar]))
-			
+            self.addConstraint(NSLayoutConstraint(item: self, attribute: .leading, relatedBy: .equal, toItem: _toolbar, attribute: .leading, multiplier: 1, constant: 0))
+            self.addConstraint(NSLayoutConstraint(item: self, attribute: .trailing, relatedBy: .equal, toItem: _toolbar, attribute: .trailing, multiplier: 1, constant: 0))
+            self.addConstraint(NSLayoutConstraint(item: self, attribute: .top, relatedBy: .equal, toItem: _toolbar, attribute: .top, multiplier: 1, constant: 0))
+            
+            if #available(iOS 11.0, *) {
+                let constraint = NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: _toolbar, attribute: .bottom, multiplier: 1, constant: UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0)
+                constraint.priority = UILayoutPriority(900)
+                self.addConstraint(constraint)
+            } else {
+                self.addConstraint(NSLayoutConstraint(item: self, attribute: .bottom, relatedBy: .equal, toItem: _toolbar, attribute: .bottom, multiplier: 1, constant: 0))
+            }
+            
             // Set up _toolbar
             let items = _showsStopRefreshControl ? [_backButtonItem, _forwardButtonItem, _flexibleSpace, _refreshButtonItem] : [_backButtonItem, _forwardButtonItem]
             _toolbar.setItems(items, animated: false)

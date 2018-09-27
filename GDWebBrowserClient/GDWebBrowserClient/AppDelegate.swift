@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
     // MARK: GDWebViewControllerDelegate Methods
     
     func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?) {
-        navVC.navigationBar.topItem?.title = newTitle as? String
+        navVC.navigationBar.topItem?.title = newTitle as String?
     }
     
     func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
@@ -39,8 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
                 return
             }
         }
-        
-        print(navigationAction.request.url?.host)
         decisionHandler(.cancel)
     }
     
@@ -101,7 +99,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GDWebViewControllerDelega
     
     func webViewDidDisappear(_ webViewController: GDWebViewController) {
     }
-    
     
 }
 

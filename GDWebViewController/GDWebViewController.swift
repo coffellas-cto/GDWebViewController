@@ -24,18 +24,50 @@ public enum GDWebViewControllerProgressIndicatorStyle {
     case none
 }
 
-@objc public protocol GDWebViewControllerDelegate {
-    @objc optional func webViewController(_ webViewController: GDWebViewController, didChangeURL newURL: URL?)
-    @objc optional func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
-    @objc optional func webViewController(_ webViewController: GDWebViewController, didFinishLoading loadedURL: URL?)
-    @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
-    @objc optional func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
-    @objc optional func webViewController(_ webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
-    @objc optional func webViewWillAppear(_ webViewController: GDWebViewController)
-    @objc optional func webViewDidAppear(_ webViewController: GDWebViewController)
-    @objc optional func webViewWillDisappear(_ webViewController: GDWebViewController)
-    @objc optional func webViewDidDisappear(_ webViewController: GDWebViewController)
-    @objc optional func webViewViewDidLoad(_ webViewController: GDWebViewController)
+public enum GDWebViewControllerAlertType {
+    case `default`
+    case prohibited
+    case prohibitedResponse
+    case fail
+    case failNavigation
+}
+
+public protocol GDWebViewControllerDelegate: class {
+    func webViewController(_ webViewController: GDWebViewController, didChangeURL newURL: URL?)
+    func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?)
+    func webViewController(_ webViewController: GDWebViewController, didFinishLoading loadedURL: URL?)
+    func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void)
+    func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void)
+    func webViewController(_ webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+    func webViewAlertController(_ webViewController: GDWebViewController, alertController: UIAlertController, didUrl url: URL?, alertType type: GDWebViewControllerAlertType)
+    func webViewWillAppear(_ webViewController: GDWebViewController)
+    func webViewDidAppear(_ webViewController: GDWebViewController)
+    func webViewWillDisappear(_ webViewController: GDWebViewController)
+    func webViewDidDisappear(_ webViewController: GDWebViewController)
+    func webViewViewDidLoad(_ webViewController: GDWebViewController)
+}
+
+extension GDWebViewControllerDelegate {
+    func webViewController(_ webViewController: GDWebViewController, didChangeURL newURL: URL?) { }
+    func webViewController(_ webViewController: GDWebViewController, didChangeTitle newTitle: NSString?) { }
+    func webViewController(_ webViewController: GDWebViewController, didFinishLoading loadedURL: URL?) { }
+    func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationAction navigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Void) {
+        decisionHandler(.allow)
+    }
+    func webViewController(_ webViewController: GDWebViewController, decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse, decisionHandler: (WKNavigationResponsePolicy) -> Void) {
+        decisionHandler(.allow)
+    }
+    func webViewController(_ webViewController: GDWebViewController, didReceiveAuthenticationChallenge challenge: URLAuthenticationChallenge, completionHandler: (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        completionHandler(.performDefaultHandling, nil)
+    }
+    func webViewAlertController(_ webViewController: GDWebViewController, alertController: UIAlertController, didUrl url: URL?, alertType type: GDWebViewControllerAlertType) {
+        webViewController.present(alertController, animated: true, completion: nil)
+    }
+    func webViewWillAppear(_ webViewController: GDWebViewController) { }
+    func webViewDidAppear(_ webViewController: GDWebViewController) { }
+    func webViewWillDisappear(_ webViewController: GDWebViewController) { }
+    func webViewDidDisappear(_ webViewController: GDWebViewController) { }
+    func webViewViewDidLoad(_ webViewController: GDWebViewController) { }
 }
 
 open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, GDWebViewNavigationToolbarDelegate {
@@ -61,11 +93,19 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     /** A boolean value if set to true shows the toolbar; otherwise, hides it. */
     open var showsToolbar: Bool {
         set(value) {
-            self.toolbarHeight = value ? 44 : 0
+            var bottomSafeInset: CGFloat = 0
+            if #available(iOS 11.0, *) {
+                bottomSafeInset = (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0)
+            }
+            self.toolbarHeight = value ? (44 + bottomSafeInset) : 0
         }
         
         get {
-            return self.toolbarHeight == 44
+            if #available(iOS 11.0, *) {
+                return self.toolbarHeight == 44 + (UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0)
+            } else {
+                return self.toolbarHeight == 44
+            }
         }
     }
     
@@ -202,7 +242,7 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
             return
         }
         
-        showError(error.localizedDescription)
+        self.showError(error.localizedDescription, url: webView.url, type: .fail)
     }
     
     open func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
@@ -210,11 +250,11 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         if error._code == NSURLErrorCancelled {
             return
         }
-        showError(error.localizedDescription)
+        self.showError(error.localizedDescription, url: webView.url, type: .failNavigation)
     }
     
     open func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard ((delegate?.webViewController?(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
+        guard ((delegate?.webViewController(self, didReceiveAuthenticationChallenge: challenge, completionHandler: { (disposition, credential) -> Void in
             completionHandler(disposition, credential)
         })) != nil)
             else {
@@ -231,23 +271,23 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     }
     
     open func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        guard ((delegate?.webViewController?(self, decidePolicyForNavigationAction: navigationAction, decisionHandler: { (policy) -> Void in
+        guard ((delegate?.webViewController(self, decidePolicyForNavigationAction: navigationAction, decisionHandler: { (policy) -> Void in
             decisionHandler(policy)
             if policy == .cancel {
-                self.showError("This navigation is prohibited.")
+                self.showError("This navigation is prohibited.", url: webView.url, type: .prohibited)
             }
         })) != nil)
             else {
-                decisionHandler(.allow);
+                decisionHandler(.allow)
                 return
         }
     }
     
     open func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
-        guard ((delegate?.webViewController?(self, decidePolicyForNavigationResponse: navigationResponse, decisionHandler: { (policy) -> Void in
+        guard ((delegate?.webViewController(self, decidePolicyForNavigationResponse: navigationResponse, decisionHandler: { (policy) -> Void in
             decisionHandler(policy)
             if policy == .cancel {
-                self.showError("This navigation response is prohibited.")
+                self.showError("This navigation response is prohibited.", url: webView.url, type: .prohibitedResponse)
             }
         })) != nil)
             else {
@@ -268,15 +308,23 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
             completionHandler()
         }))
         
-        self.present(alertController, animated: true, completion: nil)
+        if self.delegate == nil {
+            self.present(alertController, animated: true, completion: nil)
+        } else {
+            self.delegate?.webViewAlertController(self, alertController: alertController, didUrl: webView.url, alertType: .default)
+        }
     }
     
     // MARK: Some Private Methods
     
-    fileprivate func showError(_ errorString: String?) {
-        let alertView = UIAlertController(title: "Error", message: errorString, preferredStyle: .alert)
-        alertView.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        self.present(alertView, animated: true, completion: nil)
+    fileprivate func showError(_ errorString: String?, url: URL?, type: GDWebViewControllerAlertType) {
+        let alertController = UIAlertController(title: "Error", message: errorString, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        if self.delegate == nil {
+            self.present(alertController, animated: true, completion: nil)
+        } else {
+            self.delegate?.webViewAlertController(self, alertController: alertController, didUrl: url, alertType: type)
+        }
     }
     
     fileprivate func showLoading(_ animate: Bool) {
@@ -339,15 +387,15 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
                 }
             }
         case "URL":
-            delegate?.webViewController?(self, didChangeURL: webView.url)
+            delegate?.webViewController(self, didChangeURL: webView.url)
         case "title":
-            delegate?.webViewController?(self, didChangeTitle: webView.title as NSString?)
+            delegate?.webViewController(self, didChangeTitle: webView.title as NSString?)
         case "loading":
             if let val = change?[NSKeyValueChangeKey.newKey] as? Bool {
                 if !val {
                     showLoading(false)
                     backForwardListChanged()
-                    delegate?.webViewController?(self, didFinishLoading: webView.url)
+                    delegate?.webViewController(self, didFinishLoading: webView.url)
                 }
             }
         default:
@@ -384,7 +432,7 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[webView]-0-|", options: [], metrics: nil, views: ["webView": webView as WKWebView]))
         self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[topGuide]-0-[webView]-0-[toolbarContainer]|", options: [], metrics: nil, views: ["webView": webView as WKWebView, "toolbarContainer": toolbarContainer, "topGuide": self.topLayoutGuide]))
         
-        self.delegate?.webViewViewDidLoad?(self)
+        self.delegate?.webViewViewDidLoad(self)
     }
     
     override open func viewWillAppear(_ animated: Bool) {
@@ -394,7 +442,7 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         webView.addObserver(self, forKeyPath: "title", options: .new, context: nil)
         webView.addObserver(self, forKeyPath: "loading", options: .new, context: nil)
         
-        self.delegate?.webViewWillAppear?(self)
+        self.delegate?.webViewWillAppear(self)
     }
     
     override open func viewWillDisappear(_ animated: Bool) {
@@ -404,7 +452,7 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
         webView.removeObserver(self, forKeyPath: "title")
         webView.removeObserver(self, forKeyPath: "loading")
         
-        self.delegate?.webViewWillDisappear?(self)
+        self.delegate?.webViewWillDisappear(self)
     }
     
     override open func viewDidAppear(_ animated: Bool) {
@@ -417,7 +465,7 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
             }
         }
         
-        self.delegate?.webViewDidAppear?(self)
+        self.delegate?.webViewDidAppear(self)
     }
     
     override open func viewDidDisappear(_ animated: Bool) {
@@ -426,7 +474,7 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
             self.navigationController?.interactivePopGestureRecognizer?.isEnabled = true
         }
         
-        self.delegate?.webViewDidDisappear?(self)
+        self.delegate?.webViewDidDisappear(self)
     }
     
     
