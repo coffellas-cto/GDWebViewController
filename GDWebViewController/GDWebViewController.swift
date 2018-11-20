@@ -85,8 +85,9 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     /** Boolean flag which indicates whether JavaScript alerts are allowed. Default is `true`. */
     open var allowJavaScriptAlerts = true
     
+    public var webView: WKWebView!
+    
     // MARK: Private Properties
-    fileprivate var webView: WKWebView!
     fileprivate var progressView: UIProgressView!
     fileprivate var toolbarContainer: GDWebViewNavigationToolbar!
     fileprivate var toolbarHeightConstraint: NSLayoutConstraint!
@@ -95,7 +96,11 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
     lazy fileprivate var activityIndicator: UIActivityIndicatorView! = {
         var activityIndicator = UIActivityIndicatorView()
         activityIndicator.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        #if swift(>=4.2)
+        activityIndicator.style = .whiteLarge
+        #else
         activityIndicator.activityIndicatorViewStyle = .whiteLarge
+        #endif
         activityIndicator.hidesWhenStopped = true
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         self.view.addSubview(activityIndicator)
@@ -166,6 +171,22 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
                 self.view.layoutIfNeeded()
             }
         }
+    }
+    
+    @objc open func goBack(){
+        webView.goBack()
+    }
+    
+    @objc open func goForward(){
+        webView.goForward()
+    }
+    
+    @objc open func stopLoading(){
+        webView.stopLoading()
+    }
+    
+    @objc open func reload(){
+        webView.reload()
     }
     
     // MARK: GDWebViewNavigationToolbarDelegate Methods
@@ -249,6 +270,16 @@ open class GDWebViewController: UIViewController, WKNavigationDelegate, WKUIDele
                 decisionHandler(.allow)
                 return
         }
+    }
+    
+    
+    open func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        if navigationAction.targetFrame == nil, let url = navigationAction.request.url{
+            if url.description.lowercased().range(of: "http://") != nil || url.description.lowercased().range(of: "https://") != nil  {
+                webView.load(navigationAction.request)
+            }
+        }
+        return nil
     }
     
     // MARK: WKUIDelegate Methods
